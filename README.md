@@ -1,16 +1,32 @@
-# scanner_app
+# Scanner App 
 
-A new Flutter project.
 
-## Getting Started
+## What is the Scanner App?
 
-This project is a starting point for a Flutter application.
+The Scanner App is an application that helps you when registering jewelry.
+With it, you insert the jewelry data into the application and it generates a code that can be
+exported both when read by the App itself.
 
-A few resources to get you started if this is your first Flutter project:
+## General Observations
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- This project is a Mobile App made in Dart using the Flutter framework.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- This is an interdisciplinary work done for college to solve a real problem we face.
+
+
+# Portuguese - Brazil
+
+
+
+## O que é o Scanner App?
+
+O Scanner App é um aplicativo que auxilia na hora de cadastrar joias.
+Com ele você insere os dados da joia no aplicativo e ele gera um código que pode ser
+exportados ambos quando lidos pelo próprio App.
+
+## Observações gerais
+
+- Este projeto é um Mobile App feito em Dart utilizando o framework Flutter.
+
+- Este é um trabalho interdisciplinar feito para a faculdade resolver um problema real que enfrentamos.
+
