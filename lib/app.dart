@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/homepage.dart';
 
 class ScannerApp extends StatelessWidget {
   const ScannerApp({Key? key}) : super(key: key);
@@ -6,6 +7,10 @@ class ScannerApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(title: "Scanner App",);
+    return MaterialApp(
+      title: "Scanner App",//Titulo do App(Edge)
+      routes: {"/home":(context) => HomePage()}, // rota para a tela home
+      initialRoute: '/home',
+    );
   }
 }
