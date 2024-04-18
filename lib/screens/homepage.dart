@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../styles/styles.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -13,7 +14,7 @@ class HomePage extends StatelessWidget {
         child: (Center(
           child: Column(
             children: [
-              Text('Home'),
+              Text('Home',style:StylesProntos.titulo),
               ElevatedButton(
                 onPressed: () => {},
                 child: Text('Registrar Produto'),
