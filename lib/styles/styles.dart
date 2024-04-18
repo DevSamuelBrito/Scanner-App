@@ -5,32 +5,20 @@ class StylesProntos {
   static const TextStyle titulo = TextStyle(
     fontSize: 30,
     fontWeight: FontWeight.bold,
-    color: Colors.blue,
-  );
-
-  static const TextStyle bodyStyle = TextStyle(
-    fontSize: 16,
     color: Colors.black,
   );
 
-  static const TextStyle emphasizedStyle = TextStyle(
+  static const TextStyle textBotao = TextStyle(
     fontSize: 16,
-    color: Colors.red,
-    fontWeight: FontWeight.bold,
+    color: Colors.white,
   );
 
-  static ElevatedButton buildTestButton(Text texto) {
-    return ElevatedButton(
-      onPressed: () {},
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-          side: BorderSide(color: Colors.blue, width: 2),
-        ),
-      ),
-      child: Text('${texto}'),
-    );
-  }
-
+  static final ButtonStyle estiloBotao = TextButton.styleFrom(
+    backgroundColor: Colors.black,
+    maximumSize: Size.fromHeight(50), // Define a altura mínima do botão
+    fixedSize: Size.fromWidth(300), //
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8),
+    ),
+  );
 }
-

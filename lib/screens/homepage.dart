@@ -14,18 +14,26 @@ class HomePage extends StatelessWidget {
         child: (Center(
           child: Column(
             children: [
-              Text('Home',style:StylesProntos.titulo),
-              ElevatedButton(
-                onPressed: () => {},
-                child: Text('Registrar Produto'),
+              Text('Home', style: StylesProntos.titulo),
+              TextButton(
+                style: StylesProntos.estiloBotao,
+                onPressed: () => Navigator.pushNamed(context, "/cadastroProdutos"),
+                child:
+                    Text('Registrar Produto', style: StylesProntos.textBotao),
               ),
-              ElevatedButton(
+              SizedBox(height: 10),
+              TextButton(
+                style: StylesProntos.estiloBotao,
                 onPressed: () => {},
-                child: Text('Verificar Produto'),
+                child: Text('Leitura Produto', style: StylesProntos.textBotao),
               ),
-              ElevatedButton(
+              // ignore: prefer_const_constructors
+              SizedBox(height: 10),
+              TextButton(
+                style: StylesProntos.estiloBotao,
                 onPressed: () => {},
-                child: Text('Vender Produto'),
+                child:
+                    Text('Cadastro de Venda', style: StylesProntos.textBotao),
               ),
             ],
           ),
