@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'screens/homepage.dart';
 import 'screens/cadastroProdutos.dart';
+import 'screens/leituraCodigoBarras.dart';
+import 'screens/cadastrarVendas.dart';
+
 
 class ScannerApp extends StatelessWidget {
   // criando a classe que vai criar o APP no geral
@@ -13,7 +16,9 @@ class ScannerApp extends StatelessWidget {
       title: "Scanner App", //Titulo do App(Edge)
       routes: {
         "/home": (context) => HomePage(),// rota para a tela home
-        "/cadastroProdutos": (context) => cadastroProdutos(),// rota para a tela cadastroProdutos
+        "/cadastroProdutos": (context) => cadastroProdutos(),// rota para a tela cadastro produtos
+        "/leituraCodigoBarras": (context) => leituraCodigoBarras(),// rota para a tela leitura codigo de barras
+        "/cadastroVendas": (context) => cadastroVendas(),// rota para a tela leitura cadastro de vendas
       }, 
       initialRoute: '/home',
     );
