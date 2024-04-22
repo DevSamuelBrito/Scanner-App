@@ -13,6 +13,7 @@ class ScannerApp extends StatelessWidget {
       theme: ThemeData.dark(
         useMaterial3: false,
       ),
+      initialRoute: "/cadastrarProdutos",
       // Definindo as rotas para as telas do app
       routes: {
         "/cadastrarProdutos": (context) =>
