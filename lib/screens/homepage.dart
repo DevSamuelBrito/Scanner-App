@@ -5,11 +5,11 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // isso daqui vai centralizar os elementos verticalmente
-        children: [
-          Expanded(
-            child: Center(
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center, // isso daqui vai centralizar os elementos verticalmente
+          children: [
+            Center(
               child: Container(
                 child: Image.asset(
                   "lib/images/icon.png",
@@ -17,9 +17,7 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: Center(
+            Center(
               child: Column( 
                 children: [
                   TextButton(
@@ -31,7 +29,7 @@ class HomePage extends StatelessWidget {
                       style: StylesProntos.textBotao,
                     ),
                   ),
-
+                    
                   SizedBox(height: 30),
                   TextButton(
                     style: StylesProntos.estiloBotao,
@@ -42,7 +40,7 @@ class HomePage extends StatelessWidget {
                       style: StylesProntos.textBotao,
                     ),
                   ),
-
+                    
                   SizedBox(height: 30),
                   TextButton(
                     style: StylesProntos.estiloBotao,
@@ -53,7 +51,7 @@ class HomePage extends StatelessWidget {
                       style: StylesProntos.textBotao,
                     ),
                   ),
-
+                    
                   SizedBox(height: 30),
                   TextButton(
                     style: StylesProntos.estiloBotao,
@@ -64,7 +62,7 @@ class HomePage extends StatelessWidget {
                       style: StylesProntos.textBotao,
                     ),
                   ),
-
+                    
                   SizedBox(height: 30),
                   TextButton(
                     style: StylesProntos.estiloBotao,
@@ -75,12 +73,12 @@ class HomePage extends StatelessWidget {
                       style: StylesProntos.textBotao,
                     ),
                   ),
-
+                    
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
