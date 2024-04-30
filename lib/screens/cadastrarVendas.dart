@@ -7,6 +7,30 @@ class cadastroVendas extends StatelessWidget {
       appBar: AppBar(
         title: Text("Cadastro Vendas"),
       ),
+      body: Container(
+        child: Column(
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Insira o nome do produto',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Insira o',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Insira o nome do produto',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
