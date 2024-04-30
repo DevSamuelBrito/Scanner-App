@@ -20,7 +20,7 @@ class ScannerApp extends StatelessWidget {
         "/cadastroProdutos": (context) => cadastroProdutos(),// rota para a tela cadastro produtos
         "/leituraCodigoBarras": (context) => leituraCodigoBarras(),// rota para a tela leitura codigo de barras
         "/cadastroVendas": (context) => cadastroVendas(),// rota para a tela leitura cadastro de vendas
-        "/tabelaVendas": (context) => tabelaProdutos(),// rota para a tela leitura cadastro de vendas
+        "/tabelaVendas": (context) => tabelaProdutos(),// rota para a tela leitura tabela de produtos
       }, 
       initialRoute: '/home',
     );
