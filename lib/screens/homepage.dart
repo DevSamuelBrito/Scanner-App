@@ -25,6 +25,16 @@ class HomePage extends StatelessWidget {
                   TextButton(
                     style: StylesProntos.estiloBotao,
                     onPressed: () =>
+                        Navigator.pushNamed(context, "/tabelaVendas"),
+                    child: Text(
+                      'Tabela de Produtos',
+                      style: StylesProntos.textBotao,
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  TextButton(
+                    style: StylesProntos.estiloBotao,
+                    onPressed: () =>
                         Navigator.pushNamed(context, "/cadastroProdutos"),
                     child: Text(
                       'Registrar Produto',
