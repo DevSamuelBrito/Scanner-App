@@ -31,16 +31,18 @@ class HomePage extends StatelessWidget {
                       style: StylesProntos.textBotao,
                     ),
                   ),
+
                   SizedBox(height: 30),
                   TextButton(
                     style: StylesProntos.estiloBotao,
                     onPressed: () =>
-                        Navigator.pushNamed(context, "/cadastroProdutos"),
+                        Navigator.pushNamed(context, "/cadastroProdutos"),                        
                     child: Text(
                       'Registrar Produto',
                       style: StylesProntos.textBotao,
                     ),
                   ),
+
                   SizedBox(height: 30),
                   TextButton(
                     style: StylesProntos.estiloBotao,
@@ -51,6 +53,7 @@ class HomePage extends StatelessWidget {
                       style: StylesProntos.textBotao,
                     ),
                   ),
+
                   SizedBox(height: 30),
                   TextButton(
                     style: StylesProntos.estiloBotao,
@@ -61,6 +64,18 @@ class HomePage extends StatelessWidget {
                       style: StylesProntos.textBotao,
                     ),
                   ),
+
+                  SizedBox(height: 30),
+                  TextButton(
+                    style: StylesProntos.estiloBotao,
+                    onPressed: () =>
+                        Navigator.pushNamed(context, "/cadastroClientes"),
+                    child: Text(
+                      'Cadastrar um Cliente',
+                      style: StylesProntos.textBotao,
+                    ),
+                  ),
+
                 ],
               ),
             ),
