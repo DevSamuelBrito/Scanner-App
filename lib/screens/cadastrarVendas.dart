@@ -1,87 +1,39 @@
-import "package:flutter/material.dart";
-import '../styles/styles.dart';
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class cadastroVendas extends StatefulWidget {
-  @override
-  _cadastroVendasState createState() => _cadastroVendasState();
+class Product {
+  String? idPronto;
+  String? nomeProd;
+  String? qtd;
+
+  Product({this.idPronto, this.nomeProd, this.qtd});
 }
 
-class _cadastroVendasState extends State<cadastroVendas> {
-  final qtd = TextEditingController();
-  final nomeProd = TextEditingController();
-  final idProduto = TextEditingController();
+class CadastroVendas extends StatefulWidget {
+  @override
+  _CadastroVendasState createState() => _CadastroVendasState();
+}
+
+class _CadastroVendasState extends State<CadastroVendas> {
   final nomeCliente = TextEditingController();
+  List<Product> produtos = [];
 
   void enviarProdutosVendas(BuildContext context) {
     FirebaseFirestore.instance.collection('Vendas').add({
-      'qtd': qtd.text,
-      'nomeProd': nomeProd.text,
-      'idProduto': idProduto.text,
       'nomeCliente': nomeCliente.text,
+      'produtos': produtos.map((produto) {
+        return {
+          'idProduto': produto.idPronto,
+          'nomeProd': produto.nomeProd,
+          'qtd': produto.qtd,
+        };
+      }).toList(),
     });
-    qtd.clear();
-    nomeProd.clear();
-    idProduto.clear();
+
     nomeCliente.clear();
-  }
-
-  List<Widget> camposProduto = [];
-
-  _cadastroVendasState() {
-    camposProduto = [
-      TextField(
-        controller: idProduto,
-        decoration: InputDecoration(
-          hintText: 'Insira o id produto',
-          border: OutlineInputBorder(),
-        ),
-      ),
-      TextField(
-        controller: nomeProd,
-        decoration: InputDecoration(
-          hintText: 'Insira o nome do produto',
-          border: OutlineInputBorder(),
-        ),
-      ),
-      TextField(
-        controller: qtd,
-        decoration: InputDecoration(
-          hintText: 'Quantidade',
-          border: OutlineInputBorder(),
-        ),
-      ),
-    ];
-  }
-
-  Widget gerarNovosCampo(BuildContext context) {
-    return Column(
-      children: [
-        TextField(
-          controller: idProduto,
-          decoration: InputDecoration(
-            hintText: 'Insira o id produto',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        SizedBox(height: 10),
-        TextField(
-          controller: nomeProd,
-          decoration: InputDecoration(
-            hintText: 'Insira o nome do produto',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        SizedBox(height: 10),
-        TextField(
-          controller: qtd,
-          decoration: InputDecoration(
-            hintText: 'Quantidade',
-            border: OutlineInputBorder(),
-          ),
-        ),
-      ],
-    );
+    setState(() {
+      produtos.clear();
+    });
   }
 
   @override
@@ -91,6 +43,7 @@ class _cadastroVendasState extends State<cadastroVendas> {
         title: Text("Cadastro Vendas"),
       ),
       body: Container(
+        padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
@@ -100,25 +53,57 @@ class _cadastroVendasState extends State<cadastroVendas> {
                 border: OutlineInputBorder(),
               ),
             ),
-            ...camposProduto,
+            SizedBox(height: 16.0),
+            Column(
+              children: produtos.map((produto) {
+                return Column(
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Insira o id produto',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        produto.idPronto = value;
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Insira o nome do produto',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        produto.nomeProd = value;
+                      },
+                    ),
+                    SizedBox(height: 10),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Quantidade',
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        produto.qtd = value;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                  ],
+                );
+              }).toList(),
+            ),
             ElevatedButton(
               onPressed: () {
-                setState(
-                  () {
-                    camposProduto.add(gerarNovosCampo(
-                        context)); // Adicione novos campos à lista
-                  },
-                );
+                setState(() {
+                  produtos.add(Product());
+                });
               },
               child: Text('Adicionar mais um Produto'),
             ),
+            SizedBox(height: 16.0),
             ElevatedButton(
-              style: StylesProntos.estiloBotao,
               onPressed: () => enviarProdutosVendas(context),
-              child: Text(
-                'teste',
-                style: StylesProntos.textBotao,
-              ),
+              child: Text('Enviar Venda'),
             ),
           ],
         ),
