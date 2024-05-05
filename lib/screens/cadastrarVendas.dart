@@ -19,6 +19,32 @@ class _CadastroVendasState extends State<CadastroVendas> {
   List<Product> produtos = [];
 
   void enviarProdutosVendas(BuildContext context) {
+    // Verifica se o campo do nome do cliente está vazio
+    if (nomeCliente.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Por favor, insira o nome do cliente.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Verifica se pelo menos um produto foi adicionado à lista
+    if (produtos.isEmpty ||
+        produtos.any((produto) =>
+            produto.idPronto == null ||
+            produto.nomeProd == null ||
+            produto.qtd == null)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Por favor, preencha todos os campos do produto.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     FirebaseFirestore.instance.collection('Vendas').add({
       'nomeCliente': nomeCliente.text,
       'produtos': produtos.map((produto) {
