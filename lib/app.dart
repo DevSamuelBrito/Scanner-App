@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:scanner_app/screens/cadastrarProdutos_page.dart';
 
 class ScannerApp extends StatelessWidget {
-  const ScannerApp({super.key});
+  const ScannerApp({Key? key, this.title = "Scanner App"}) : super(key: key);
 
-  // This widget is the root of your application.
+  final String title;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Scanner App",
+      title: title,
       debugShowCheckedModeBanner: false,
       initialRoute: "/cadastrarProdutos",
       // Definindo as rotas para as telas do app
       routes: {
-        "/cadastrarProdutos": (context) =>
-            CadastrarProdutosPage(), // rota para a tela cadastro produtos
+        "/cadastrarProdutos": (context) => const CadastrarProdutosPage(
+              title: "Cadastro do Produto",
+            ), // rota para a tela cadastro produtos
       },
     );
   }
