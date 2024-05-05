@@ -5,6 +5,7 @@ import 'screens/leituraCodigoBarras.dart';
 import 'screens/cadastrarVendas.dart';
 import 'screens/tabelaProdutos.dart';
 import 'screens/cadastroClientes.dart';
+import 'screens/telaResumo.dart';
 
 
 class ScannerApp extends StatelessWidget {
@@ -23,6 +24,7 @@ class ScannerApp extends StatelessWidget {
         "/cadastroVendas": (context) => CadastroVendas(),// rota para a tela leitura cadastro de vendas
         "/tabelaProdutos": (context) => tabelaProdutos(),// rota para a tela leitura tabela de produtos
         "/cadastroClientes": (context) => cadastroClientes(),//rota para a tela de cadastro de clientes
+        "/telaResumo": (context) => TelaResumo(),//rota para a tela de cadastro de clientes
       }, 
       initialRoute: '/home',
     );

@@ -60,8 +60,11 @@ class _CadastroVendasState extends State<CadastroVendas> {
     setState(() {
       produtos.clear();
     });
+
+    Navigator.pushReplacementNamed(context, '/telaResumo');
   }
 
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,43 +83,47 @@ class _CadastroVendasState extends State<CadastroVendas> {
               ),
             ),
             SizedBox(height: 16.0),
-            Column(
-              children: produtos.map((produto) {
-                return Column(
-                  children: [
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Insira o id produto',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        produto.idPronto = value;
-                      },
+            Expanded(
+              // Envolve a seção de produtos em um Expanded para ocupar todo o espaço disponível
+              child: ListView(
+                children: [
+                  for (var produto in produtos)
+                    Column(
+                      children: [
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Insira o id produto',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            produto.idPronto = value;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Insira o nome do produto',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            produto.nomeProd = value;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        TextField(
+                          decoration: InputDecoration(
+                            hintText: 'Quantidade',
+                            border: OutlineInputBorder(),
+                          ),
+                          onChanged: (value) {
+                            produto.qtd = value;
+                          },
+                        ),
+                        SizedBox(height: 16.0),
+                      ],
                     ),
-                    SizedBox(height: 10),
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Insira o nome do produto',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        produto.nomeProd = value;
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Quantidade',
-                        border: OutlineInputBorder(),
-                      ),
-                      onChanged: (value) {
-                        produto.qtd = value;
-                      },
-                    ),
-                    SizedBox(height: 16.0),
-                  ],
-                );
-              }).toList(),
+                ],
+              ),
             ),
             ElevatedButton(
               onPressed: () {
@@ -129,7 +136,7 @@ class _CadastroVendasState extends State<CadastroVendas> {
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () => enviarProdutosVendas(context),
-              child: Text('Enviar Venda'),
+              child: Text('Cadastrar Venda'),
             ),
           ],
         ),
