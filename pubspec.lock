@@ -169,6 +169,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.16.0"
+  firebase_storage:
+    dependency: "direct main"
+    description:
+      name: firebase_storage
+      sha256: "9125c6e017833f51eef84f4feff2b7d6de20c36a9aa9f80fd3e9092b2a5b01a8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "11.7.4"
+  firebase_storage_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_storage_platform_interface
+      sha256: "3d18f72b6059b20438266d5efed466a6a78dfe4366b619945d54963b61ea72bd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.1.19"
+  firebase_storage_web:
+    dependency: transitive
+    description:
+      name: firebase_storage_web
+      sha256: "53fcd9d5bbe5539f9d69b337e632e67658882857736aa1dcc996b34daaafb113"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.9.4"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -356,10 +380,10 @@ packages:
     dependency: "direct main"
     description:
       name: phosphor_flutter
-      sha256: "3b3e6e4cbda8208f8c1431b0999842f0b76db73853dd824fd4847a9f0166931a"
+      sha256: "82aee69109d55518abbc5d77aeb893bfd2d39796aa51b871cadf2e56d03fa8e3"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.1"
+    version: "1.4.0"
   plugin_platform_interface:
     dependency: transitive
     description:

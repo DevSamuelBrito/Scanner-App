@@ -13,5 +13,5 @@ const firebaseConfig = FirebaseOptions(
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   Firebase.initializeApp(options: firebaseConfig);
-  runApp(const ScannerApp());
+  runApp(ScannerApp());
 }
