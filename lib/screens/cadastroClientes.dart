@@ -6,7 +6,7 @@ class cadastroClientes extends StatelessWidget {
   final _txtPrice = TextEditingController();
 
   void _onSaved(BuildContext context) {
-    FirebaseFirestore.instance.collection('TabelaClientes').add({
+    FirebaseFirestore.instance.collection('Clientes').add({
       'nome': _txtName.text,
       'price': double.parse(_txtPrice.text),
     });
