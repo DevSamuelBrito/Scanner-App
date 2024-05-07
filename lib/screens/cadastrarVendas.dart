@@ -64,7 +64,12 @@ class _CadastroVendasState extends State<CadastroVendas> {
     Navigator.pushReplacementNamed(context, '/telaResumo');
   }
 
-  @override
+  void removerUltimosProdutos() {
+    setState(() {
+      produtos.removeRange(produtos.length - 1, produtos.length);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,6 +130,12 @@ class _CadastroVendasState extends State<CadastroVendas> {
                 ],
               ),
             ),
+            if (produtos.isNotEmpty)
+              ElevatedButton(
+                onPressed: removerUltimosProdutos,
+                child: Text('Remover Últimos 3 Produtos'),
+              ),
+            SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 setState(() {
