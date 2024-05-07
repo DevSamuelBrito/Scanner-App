@@ -67,9 +67,9 @@ class HomePage extends StatelessWidget {
                   TextButton(
                     style: StylesProntos.estiloBotao,
                     onPressed: () =>
-                        Navigator.pushNamed(context, "/cadastroClientes"),
+                        Navigator.pushNamed(context, "/clientes"),
                     child: Text(
-                      'Cadastrar um Cliente',
+                      'Clientes',
                       style: StylesProntos.textBotao,
                     ),
                   ),

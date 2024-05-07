@@ -6,16 +6,49 @@ class cadastroClientes extends StatelessWidget {
   final _txtPrice = TextEditingController();
 
   void _onSaved(BuildContext context) {
+
+    final nameText = _txtName.text.trim();
+    if (nameText.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Insira um nome para o Cliente.'),
+        )
+      );
+      return;
+    }
+
+    final priceText = _txtPrice.text.trim();
+    if (priceText.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Por favor, insira um valor para o multiplicador de preço.'),
+        ),
+      );
+      return;
+    }
+    final price = double.tryParse(priceText);
+    if (price == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('O valor do multiplicador de preço deve ser um número válido. (Separador de decimais é um ponto ".")'),
+        ),
+      );
+      return;
+    }
+
     FirebaseFirestore.instance.collection('Clientes').add({
       'nome': _txtName.text,
-      'price': double.parse(_txtPrice.text),
+      'price': price,
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.green,
         content: Text('Cliente cadastrado com sucesso'),
-      )
+      ),
     );
 
     Navigator.pushReplacementNamed(context, "/home");
@@ -35,14 +68,14 @@ class cadastroClientes extends StatelessWidget {
               controller: _txtName,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "Nome do Cliente..."
+                hintText: "Nome do Cliente...",
               ),
             ),
             TextField(
               controller: _txtPrice,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "Multiplicador de preço do Cliente..."
+                hintText: "Multiplicador de preço do Cliente...",
               ),
             ),
             Container(
@@ -52,9 +85,10 @@ class cadastroClientes extends StatelessWidget {
                 child: Text("Salvar"),
                 onPressed: () => _onSaved(context),
               ),
-            )
-          ],)
-      )
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
