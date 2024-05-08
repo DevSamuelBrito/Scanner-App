@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.scanner_app"
-    compileSdk localProperties.getProperty('flutter.compileSdkVersion').toInteger()
+    compileSdk flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
     compileOptions {
