@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Product {
@@ -16,9 +17,12 @@ class CadastroVendas extends StatefulWidget {
 
 class _CadastroVendasState extends State<CadastroVendas> {
   final nomeCliente = TextEditingController();
+  String? data;
+  String? time;
   List<Product> produtos = [];
 
   void enviarProdutosVendas(BuildContext context) {
+    returnTime();
     // Verifica se o campo do nome do cliente está vazio
     if (nomeCliente.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -46,6 +50,8 @@ class _CadastroVendasState extends State<CadastroVendas> {
     }
 
     FirebaseFirestore.instance.collection('Vendas').add({
+      'Data': returnTime()['data'],
+      'Time':  returnTime()['time'],
       'nomeCliente': nomeCliente.text,
       'produtos': produtos.map((produto) {
         return {
@@ -68,6 +74,15 @@ class _CadastroVendasState extends State<CadastroVendas> {
     setState(() {
       produtos.removeRange(produtos.length - 1, produtos.length);
     });
+  }
+
+  Map<String, dynamic> returnTime() {
+    final DateTime dateNow = DateTime.now();
+    final dateFormatter = DateFormat('yyyy-MM-dd');
+    final timeFormatter = DateFormat('HH:mm');
+    final formattedDate = dateFormatter.format(dateNow);
+    final formattedTime = timeFormatter.format(dateNow);
+    return {"data": formattedDate, "time": formattedTime};
   }
 
   @override
