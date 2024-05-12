@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
+import 'package:extended_masked_text/extended_masked_text.dart';
 import 'dart:io';
 import 'dart:math';
 
@@ -37,37 +38,16 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
           imageFile = File(PickedFile.path);
         },
       );
-      _uploadImageToFirebase(PickedFile.path);
+      // _uploadImageToFirebase(PickedFile.path);
     }
   }
-  // Future<void> _pickImageFromGallery() async {
-  //   final picker = ImagePicker();
-  //   final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-  //   if (pickedImage != null) {
-  //     setState(() {
-  //       imageFile = File(pickedImage.path);
-  //     });
-  //     _uploadImageToFirebase(pickedImage.path);
-  //   }
-  // }
-
-  // Future<void> _captureImageFromCamera() async {
-  //   final picker = ImagePicker();
-  //   final pickedImage = await picker.pickImage(source: ImageSource.camera);
-  //   if (pickedImage != null) {
-  //     setState(() {
-  //       imageFile = File(pickedImage.path);
-  //     });
-  //     _uploadImageToFirebase(pickedImage.path);
-  //   }
-  // }
 
   Future<void> _uploadImageToFirebase(String imagePath) async {
     final storage = FirebaseStorage.instance;
+    File file = File(imagePath);
     try {
-      String imageName =
-          "${DateTime.now().millisecondsSinceEpoch.toString()}.png";
-      await storage.ref('images/$imageName').putString(imagePath);
+      String imageName = "images/img-${DateTime.now().toString()}.png";
+      await storage.ref(imageName).putFile(file);
       String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
     } catch (e) {
       print('Erro ao fazer upload da imagem: $e');
@@ -81,29 +61,89 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
   }
 
   final txtDescricao = TextEditingController();
-  final txtPrecoVenda = TextEditingController();
+  final txtPrecoVenda =
+      MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
   final txtReferencia = TextEditingController();
 
   void _Cadastrar(BuildContext context) {
-    // Gere um productId único utilizando a função v4 do uuid
-    String productId = uuid.v4();
-    FirebaseFirestore.instance.collection('Produtos').add(
-      {
-        'descricao': txtDescricao.text,
-        'precoVenda': txtPrecoVenda.text,
-        'referencia': txtReferencia.text,
-        'codigoBarras': randomNumbers,
-        'produtoId': productId,
-      },
-    ).then((DocumentReference docRef) {
-      print('ID do produto cadastrado: $productId');
+    //Lista para armazenar os nomes dos campos não preenchidos
+    List<String> camposNaoPreenchidos = [];
 
-      // Você pode realizar outras operações com o ID do documento aqui, se necessário
-    }).catchError((error) {
-      // Trate erros, se houver algum
-      print('Erro ao cadastrar o produto: $error');
-    });
-    Navigator.pop(context);
+    //Verifica se o campo de descrição está vazio
+    if (txtDescricao.text.isEmpty) {
+      camposNaoPreenchidos.add("Descrição");
+    }
+
+    //Verifica se o campo de preço de venda está vazio
+    if (txtPrecoVenda.text.isEmpty) {
+      camposNaoPreenchidos.add("Preço de venda");
+    }
+
+    //Verifica se o campo de Refêrencia está vazio
+    if (txtReferencia.text.isEmpty) {
+      camposNaoPreenchidos.add("Referência");
+    }
+
+    //Verifica se o código de barras está vazio
+    if (randomNumbers.isEmpty) {
+      camposNaoPreenchidos.add("Código de Barras");
+    }
+
+    //Verifica se a imagem está vazia
+    if (imageFile == null) {
+      camposNaoPreenchidos.add("Imagem");
+    }
+
+    //Se houver campos não preenchidos, mostra o dialogo de alerta
+    if (camposNaoPreenchidos.isNotEmpty) {
+      //Monsta a mensagem de alerta com os nomes dos campos não preenchidos
+      String mensagem = "Os seguintes campos não foram preenchidos:\n";
+      mensagem += camposNaoPreenchidos.join(",\n");
+
+      //Mostra o Dialogo de alerta
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Campos Obrigatórios"),
+            content: Text(mensagem),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return; //Sai do método caso haja campos não preenchidos
+    }
+
+    if (camposNaoPreenchidos.isEmpty) {
+      // Gere um productId único utilizando a função v4 do uuid
+      String productId = uuid.v4();
+      FirebaseFirestore.instance.collection('Produtos').add(
+        {
+          'descricao': txtDescricao.text,
+          'precoVenda': txtPrecoVenda.text,
+          'referencia': txtReferencia.text,
+          'codigoBarras': randomNumbers,
+          'produtoId': productId,
+        },
+      ).then((DocumentReference docRef) {
+        print('ID do produto cadastrado: $productId');
+        // Upload da imagem para o Firebase
+        _uploadImageToFirebase(imageFile!.path);
+
+        // Você pode realizar outras operações com o ID do documento aqui, se necessário
+      }).catchError((error) {
+        // Trate erros, se houver algum
+        print('Erro ao cadastrar o produto: $error');
+      });
+      Navigator.pop(context);
+    }
   }
 
   void _ShowOpcoesBottomSheet() {
@@ -235,7 +275,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 15),
-                TextFormField(
+                TextField(
                   controller: txtPrecoVenda,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -243,12 +283,21 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                     prefixText: "R\$",
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^\d+\.?\d{0,2}'),
-                    )
-                  ],
                 ),
+                // TextFormField(
+                //   controller: txtPrecoVenda,
+                //   decoration: InputDecoration(
+                //     border: OutlineInputBorder(),
+                //     hintText: "Preço de Venda",
+                //   ),
+                //   keyboardType: TextInputType.numberWithOptions(decimal: true),
+                //   // inputFormatters: [
+                //   //   FilteringTextInputFormatter.allow(
+                //   //     RegExp(r'^\d+\.?\d{0,2}'),
+                //   //   )
+
+                //   //],
+                // ),
                 SizedBox(height: 15),
                 TextField(
                   controller: txtReferencia,
