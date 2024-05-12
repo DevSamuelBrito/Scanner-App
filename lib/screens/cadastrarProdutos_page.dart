@@ -9,8 +9,8 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 import 'dart:io';
 import 'dart:math';
 
@@ -25,6 +25,8 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
   String randomNumbers = '';
   final imagePicker = ImagePicker();
   File? imageFile;
+  // Instancie um objeto Uuid
+  Uuid uuid = Uuid();
 
   _pick(ImageSource source) async {
     final PickedFile = await imagePicker.pickImage(source: source);
@@ -83,14 +85,24 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
   final txtReferencia = TextEditingController();
 
   void _Cadastrar(BuildContext context) {
+    // Gere um productId único utilizando a função v4 do uuid
+    String productId = uuid.v4();
     FirebaseFirestore.instance.collection('Produtos').add(
       {
         'descricao': txtDescricao.text,
         'precoVenda': txtPrecoVenda.text,
         'referencia': txtReferencia.text,
         'codigoBarras': randomNumbers,
+        'produtoId': productId,
       },
-    );
+    ).then((DocumentReference docRef) {
+      print('ID do produto cadastrado: $productId');
+
+      // Você pode realizar outras operações com o ID do documento aqui, se necessário
+    }).catchError((error) {
+      // Trate erros, se houver algum
+      print('Erro ao cadastrar o produto: $error');
+    });
     Navigator.pop(context);
   }
 
