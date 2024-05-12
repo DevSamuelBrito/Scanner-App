@@ -42,6 +42,7 @@ dependencies:
   barcode_widget: 
   firebase_storage: ^11.6.9
   intl: ^0.17.0
+  firebase_auth: 
 
 
 dev_dependencies:

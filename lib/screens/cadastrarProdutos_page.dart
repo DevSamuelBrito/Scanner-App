@@ -9,6 +9,7 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
 import 'dart:math';
@@ -22,47 +23,48 @@ class CadastrarProdutosPage extends StatefulWidget {
 
 class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
   String randomNumbers = '';
-  // final imagePicker = ImagePicker();
+  final imagePicker = ImagePicker();
   File? imageFile;
 
-  // _pick(ImageSource source) async {
-  //   final PickedFile = await imagePicker.pickImage(source: source);
+  _pick(ImageSource source) async {
+    final PickedFile = await imagePicker.pickImage(source: source);
 
-  //   if (PickedFile != null) {
-  //     setState(
-  //       () {
-  //         imageFile = File(PickedFile.path);
-  //       },
-  //     );
-  //     _uploadImageToFirebase(PickedFile.path);
+    if (PickedFile != null) {
+      setState(
+        () {
+          imageFile = File(PickedFile.path);
+        },
+      );
+      _uploadImageToFirebase(PickedFile.path);
+    }
+  }
+  // Future<void> _pickImageFromGallery() async {
+  //   final picker = ImagePicker();
+  //   final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+  //   if (pickedImage != null) {
+  //     setState(() {
+  //       imageFile = File(pickedImage.path);
+  //     });
+  //     _uploadImageToFirebase(pickedImage.path);
   //   }
   // }
-  Future<void> _pickImageFromGallery() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        imageFile = File(pickedImage.path);
-      });
-      _uploadImageToFirebase(pickedImage.path);
-    }
-  }
 
-  Future<void> _captureImageFromCamera() async {
-    final picker = ImagePicker();
-    final pickedImage = await picker.pickImage(source: ImageSource.camera);
-    if (pickedImage != null) {
-      setState(() {
-        imageFile = File(pickedImage.path);
-      });
-      _uploadImageToFirebase(pickedImage.path);
-    }
-  }
+  // Future<void> _captureImageFromCamera() async {
+  //   final picker = ImagePicker();
+  //   final pickedImage = await picker.pickImage(source: ImageSource.camera);
+  //   if (pickedImage != null) {
+  //     setState(() {
+  //       imageFile = File(pickedImage.path);
+  //     });
+  //     _uploadImageToFirebase(pickedImage.path);
+  //   }
+  // }
 
   Future<void> _uploadImageToFirebase(String imagePath) async {
     final storage = FirebaseStorage.instance;
     try {
-      String imageName = DateTime.now().millisecondsSinceEpoch.toString();
+      String imageName =
+          "${DateTime.now().millisecondsSinceEpoch.toString()}.png";
       await storage.ref('images/$imageName').putString(imagePath);
       String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
     } catch (e) {
@@ -116,7 +118,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _pickImageFromGallery();
+                  _pick(ImageSource.gallery);
                 },
               ),
               ListTile(
@@ -135,7 +137,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _captureImageFromCamera();
+                  _pick(ImageSource.camera);
                 },
               ),
               ListTile(
