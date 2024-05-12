@@ -6,7 +6,8 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // isso daqui vai centralizar os elementos verticalmente
+        mainAxisAlignment: MainAxisAlignment
+            .center, // isso daqui vai centralizar os elementos verticalmente
         children: [
           Expanded(
             child: Center(
@@ -18,66 +19,70 @@ class HomePage extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Center(
-              child: Column( 
-                children: [
-                  TextButton(
-                    style: StylesProntos.estiloBotao,
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/tabelaVendas"),
-                    child: Text(
-                      'Tabela de Produtos',
-                      style: StylesProntos.textBotao,
-                    ),
+          Center(
+            child: Column(
+              children: [
+                TextButton(
+                  style: StylesProntos.estiloBotao,
+                  onPressed: () =>
+                      Navigator.pushNamed(context, "/tabelaProdutos"),
+                  child: Text(
+                    'Tabela de Produtos',
+                    style: StylesProntos.textBotao,
                   ),
-
-                  SizedBox(height: 30),
-                  TextButton(
-                    style: StylesProntos.estiloBotao,
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/cadastroProdutos"),                        
-                    child: Text(
-                      'Registrar Produto',
-                      style: StylesProntos.textBotao,
-                    ),
+                ),
+                SizedBox(height: 30),
+                TextButton(
+                  style: StylesProntos.estiloBotao,
+                  onPressed: () =>
+                      Navigator.pushNamed(context, "/cadastroProdutos"),
+                  child: Text(
+                    'Registrar Produto',
+                    style: StylesProntos.textBotao,
                   ),
-
-                  SizedBox(height: 30),
-                  TextButton(
-                    style: StylesProntos.estiloBotao,
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/leituraCodigoBarras"),
-                    child: Text(
-                      'Leitura Produto',
-                      style: StylesProntos.textBotao,
-                    ),
+                ),
+                SizedBox(height: 30),
+                TextButton(
+                  style: StylesProntos.estiloBotao,
+                  onPressed: () =>
+                      Navigator.pushNamed(context, "/leituraCodigoBarras"),
+                  child: Text(
+                    'Leitura Produto',
+                    style: StylesProntos.textBotao,
                   ),
-
-                  SizedBox(height: 30),
-                  TextButton(
-                    style: StylesProntos.estiloBotao,
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/cadastroVendas"),
-                    child: Text(
-                      'Cadastro de Venda',
-                      style: StylesProntos.textBotao,
-                    ),
+                ),
+                SizedBox(height: 30),
+                TextButton(
+                  style: StylesProntos.estiloBotao,
+                  onPressed: () =>
+                      Navigator.pushNamed(context, "/cadastroVendas"),
+                  child: Text(
+                    'Cadastro de Venda',
+                    style: StylesProntos.textBotao,
                   ),
-
-                  SizedBox(height: 30),
-                  TextButton(
-                    style: StylesProntos.estiloBotao,
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/cadastroClientes"),
-                    child: Text(
-                      'Cadastrar um Cliente',
-                      style: StylesProntos.textBotao,
-                    ),
+                ),
+                SizedBox(height: 30),
+                TextButton(
+                  style: StylesProntos.estiloBotao,
+                  onPressed: () =>
+                      Navigator.pushNamed(context, "/vendasScreen"),
+                  child: Text(
+                    'Tela de Vendas',
+                    style: StylesProntos.textBotao,
                   ),
-
-                ],
-              ),
+                ),
+                SizedBox(height: 30),
+                TextButton(
+                  style: StylesProntos.estiloBotao,
+                  onPressed: () =>
+                      Navigator.pushNamed(context, "/cadastroClientes"),
+                  child: Text(
+                    'Cadastrar um Cliente',
+                    style: StylesProntos.textBotao,
+                  ),
+                ),
+                SizedBox(height: 30),
+              ],
             ),
           ),
         ],
@@ -85,4 +90,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
