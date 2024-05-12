@@ -26,16 +26,61 @@ class SelecaoVendasScreen extends StatelessWidget {
               Map<String, dynamic> data =
                   document.data() as Map<String, dynamic>;
               return ListTile(
-                title: Text(data['nomeCliente'] ?? ''),
-                subtitle: Text(data['Data'] ?? ''),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AtualizacaodeVendas(document),
-                      ));
-                },
-              );
+                  title: Text(data['nomeCliente'] ?? ''),
+                  subtitle: Text(data['Data'] ?? ''),
+                  // onTap: () {
+                  //   Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) => AtualizacaodeVendas(document),
+                  //       ));
+                  // },
+                  trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                    IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        // Navegar para a tela de atualização de venda
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AtualizacaodeVendas(document),
+                          ),
+                        );
+                      },
+                    ),
+                    IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () {
+                          // Mostrar um diálogo de confirmação para deletar a venda
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                    title: Text('Confirmar exclusão'),
+                                    content: Text(
+                                        'Tem certeza de que deseja excluir esta venda?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          // Fechar o diálogo de confirmação
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('Cancelar'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          // Deletar a venda e fechar o diálogo de confirmação
+                                          FirebaseFirestore.instance
+                                              .collection('Vendas')
+                                              .doc(document.id)
+                                              .delete();
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('Confirmar'),
+                                      ),
+                                    ],
+                                  ));
+                        })
+                  ]));
             }).toList(),
           );
         },
