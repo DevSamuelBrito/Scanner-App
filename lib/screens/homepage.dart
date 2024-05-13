@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../styles/styles.dart';
 
 class HomePage extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
