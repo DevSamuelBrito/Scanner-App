@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:scanner_app/screens/cadastrarProdutos_page.dart';
 import 'screens/homepage.dart';
 import 'screens/cadastroProdutos.dart';
 import 'screens/leituraCodigoBarras.dart';
@@ -19,7 +20,7 @@ class ScannerApp extends StatelessWidget {
       title: "Scanner App", //Titulo do App(Edge)
       routes: {
         "/home": (context) => HomePage(),// rota para a tela home
-        "/cadastroProdutos": (context) => cadastroProdutos(),// rota para a tela cadastro produtos
+        "/cadastroProdutos": (context) => CadastrarProdutosPage(),// rota para a tela cadastro produtos
         "/leituraCodigoBarras": (context) => leituraCodigoBarras(),// rota para a tela leitura codigo de barras
         "/cadastroVendas": (context) => CadastroVendas(),// rota para a tela leitura cadastro de vendas
         "/tabelaProdutos": (context) => tabelaProdutos(),// rota para a tela leitura tabela de produtos

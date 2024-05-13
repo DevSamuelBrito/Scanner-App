@@ -341,7 +341,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                       style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () =>
-                        Navigator.pushNamed(context, '/ResumoPage'),
+                        Navigator.pushNamed(context, '/home'),
                   ),
                 ),
               ],
