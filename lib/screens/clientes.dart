@@ -17,10 +17,7 @@ class clientes extends StatelessWidget {
       onPressed: () => Navigator.pushNamed(context, "/cadastroClientes"),
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-        stream: firestore
-        .collection('Clientes')
-        .orderBy('Clientes')
-        .snapshots(),
+        stream: firestore.collection('Clientes').snapshots(),
         builder: (context, snapshot) {
 
           if(!snapshot.hasData) {
@@ -32,12 +29,20 @@ class clientes extends StatelessWidget {
           return ListView(
             children: docs.map((doc) => Dismissible(
                 background: Container(color: Colors.red,),
-                onDismissed: (_) => doc.reference.delete(),
+                onDismissed: (_) { 
+                  doc.reference.delete();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.red,
+                      content: Text('Cliente Excluído com sucesso'),
+                    )
+                  );
+                },
                 key: Key(doc.id),
                 child: ListTile
                 (
                   title: Text(doc['nome']),
-                  subtitle: Text(doc['price']),
+                  subtitle: Text(doc['price'].toStringAsFixed(1)),
                 ),
               ),).toList(),
           );
