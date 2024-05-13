@@ -284,20 +284,6 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
                 ),
-                // TextFormField(
-                //   controller: txtPrecoVenda,
-                //   decoration: InputDecoration(
-                //     border: OutlineInputBorder(),
-                //     hintText: "Preço de Venda",
-                //   ),
-                //   keyboardType: TextInputType.numberWithOptions(decimal: true),
-                //   // inputFormatters: [
-                //   //   FilteringTextInputFormatter.allow(
-                //   //     RegExp(r'^\d+\.?\d{0,2}'),
-                //   //   )
-
-                //   //],
-                // ),
                 SizedBox(height: 15),
                 TextField(
                   controller: txtReferencia,
@@ -340,8 +326,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                       "Resumo",
                       style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, '/home'),
+                    onPressed: () => Navigator.pushNamed(context, '/home'),
                   ),
                 ),
               ],
