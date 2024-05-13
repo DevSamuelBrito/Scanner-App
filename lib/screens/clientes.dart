@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:scanner_app/screens/updateClientes.dart';
 
 class clientes extends StatelessWidget {
   clientes({super.key});
@@ -43,6 +44,14 @@ class clientes extends StatelessWidget {
                 (
                   title: Text(doc['nome']),
                   subtitle: Text(doc['price'].toStringAsFixed(1)),
+                  trailing: IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => updateClientes(docId: doc.id))
+                      );
+                    },
+                  ),
                 ),
               ),).toList(),
           );
