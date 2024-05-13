@@ -43,6 +43,11 @@
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
+	<key>NSPhotoLibraryYsageDescription</key>
+	<string>A aplicação precisa acessar a galeria de foto para que usuário possa colocar uma foto que ele já tenha salva no produto na hora de cadastrar</string>
+	<key>NSCameraUsageDescriptions</key>
+	<string>A aplicação precisa acessar a camêra para permitir que o usuário possa tirar a foto 
+	para colocar no produtos que ele está cadastrando</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
