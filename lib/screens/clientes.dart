@@ -42,7 +42,7 @@ class clientes extends StatelessWidget {
                 key: Key(doc.id),
                 child: ListTile
                 (
-                  title: Text(doc['nome']),
+                  title: Text(doc['name']),
                   subtitle: Text(doc['price'].toStringAsFixed(1)),
                   trailing: IconButton(
                     icon: Icon(Icons.edit),

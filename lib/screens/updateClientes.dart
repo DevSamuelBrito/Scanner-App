@@ -1,16 +1,41 @@
 import "package:flutter/material.dart";
 import 'package:cloud_firestore/cloud_firestore.dart';  
+import 'package:extended_masked_text/extended_masked_text.dart';
 
-class updateClientes extends StatelessWidget {
+class updateClientes extends StatefulWidget {
 
   final String docId;
 
   updateClientes({required this.docId});
 
+  @override
+  State<updateClientes> createState() => _updateClientesState();
+}
+
+class _updateClientesState extends State<updateClientes> {
+  @override
+  initState() {
+    super.initState();
+    load();
+  }
+
+  load() async {
+    var doc = await FirebaseFirestore.instance.collection('Clientes').doc(widget.docId).get();
+    _txtName.text = doc.data() !['name'];
+    _txtPrice.text = doc.data() !['price'].toString();
+    _txtCnpj.text = doc.data() !['cnpj'];
+    _txtTelefone.text = doc.data() !['telefone'];
+    _txtCidade.text = doc.data() !['cidade'];
+  }
+
   final _txtName = TextEditingController();
   final _txtPrice = TextEditingController();
+  final _txtCnpj = MaskedTextController(mask: '00.000.000/0000-00');
+  final _txtTelefone = MaskedTextController(mask: '(00)00000-0000');
+  final _txtCidade = TextEditingController();
 
   void _onSaved(BuildContext context) {
+
     final nameText = _txtName.text.trim();
     if (nameText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -32,7 +57,6 @@ class updateClientes extends StatelessWidget {
       );
       return;
     }
-
     final price = double.tryParse(priceText);
     if (price == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -44,11 +68,46 @@ class updateClientes extends StatelessWidget {
       return;
     }
 
-    final docId = ModalRoute.of(context)!.settings.arguments as String;
+    final cnpjText = _txtCnpj.text.trim();
+    if (cnpjText.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Por favor, insira um CNPJ válido.')
+        )
+      );
+      return;
+    }    
 
-    FirebaseFirestore.instance.collection('Clientes').doc(docId).update({
-      'nome': nameText,
+    final cidadeText = _txtCidade.text.trim();
+    if (cidadeText.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Por favor, insira uma Cidade')
+        )
+      );
+      return;
+    }
+
+    final telefoneText = _txtTelefone.text.trim();
+    if (telefoneText.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Por favor, insira uma Número da casa')
+        )
+      );
+      return;
+    }            
+
+    FirebaseFirestore.instance.collection('Clientes').doc(widget.docId).update({
+      'name': _txtName.text,
       'price': price,
+      'cnpj': _txtCnpj.text,
+      'telefone': _txtTelefone.text,
+      'cidade': _txtCidade.text,
+
     }).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -56,7 +115,9 @@ class updateClientes extends StatelessWidget {
           content: Text('Cliente atualizado com sucesso'),
         ),
       );
-      Navigator.pushReplacementNamed(context, "/home");
+
+      Navigator.pushReplacementNamed(context, "/clientes");
+
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -77,20 +138,74 @@ class updateClientes extends StatelessWidget {
         margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
         child: Column(
           children: [
+
             TextField(
               controller: _txtName,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "Nome do Cliente...",
+                hintText: "Nome do Cliente",
               ),
             ),
+
             TextField(
               controller: _txtPrice,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
-                hintText: "Multiplicador de preço do Cliente...",
+                hintText: "Multiplicador de preço do Cliente",
               ),
             ),
+
+            TextField(
+              controller: _txtCnpj,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "CNPJ do Cliente"
+              )
+            ),
+
+            TextField(
+              controller: _txtCidade,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Cidade do Cliente",
+              ),
+            ),
+
+            TextField(
+              controller: _txtTelefone,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Telefone do Cliente",
+              ),
+            ),            
+
+            // Row(
+            //   children: [
+                
+            //     Flexible(
+            //       flex: 2,
+            //       child: TextField(
+            //         controller: _txtRua,
+            //         decoration: InputDecoration(
+            //           border: OutlineInputBorder(),
+            //           hintText: "Rua",
+            //         ),
+            //         ),
+            //     ),
+
+            //     Flexible(
+            //       flex: 1,
+            //       child: TextField(
+            //         controller: _txtNumeroCasa,
+            //         decoration: InputDecoration(
+            //           border: OutlineInputBorder(),
+            //           hintText: "Número",
+            //         ),
+            //       ),
+            //     ),
+            // ],
+            // ),
+
             Container(
               margin: EdgeInsets.only(top: 10),
               width: double.infinity,
