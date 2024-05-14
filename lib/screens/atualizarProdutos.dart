@@ -7,75 +7,140 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'dart:io';
+import 'package:extended_masked_text/extended_masked_text.dart';
+import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
 // Update page
 class UpdateProdutosPage extends StatefulWidget {
-  _UpdateProdutosPageState createState() => _UpdateProdutosPageState();
+  final String docId;
+  UpdateProdutosPage({required this.docId});
+
+  @override
+  State<UpdateProdutosPage> createState() => _UpdateProdutosPageState();
 }
 
 class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
-  final txtDescricao = TextEditingController();
-  final txtPrecoVenda = TextEditingController();
-  final txtReferencia = TextEditingController();
-  final imagePicker = ImagePicker();
+  late TextEditingController txtDescricao;
+  late MoneyMaskedTextController txtPrecoVenda;
+  late TextEditingController txtReferencia;
+  late ImagePicker imagePicker;
   File? imageFile;
-
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  FirebaseStorage _storage = FirebaseStorage.instance;
+  Uuid uuid = Uuid();
 
   @override
-  void _getProduto() async {
-    DocumentSnapshot documento =
-        await _firestore.collection('Produtos').doc('produtoId').get();
-    if (documento != null) {
-      txtDescricao.text = documento.get('descricao');
-      txtPrecoVenda.text = documento.get('precoVenda');
-      txtReferencia.text = documento.get('referencia');
+  void initState() {
+    super.initState();
+    txtDescricao = TextEditingController();
+    txtPrecoVenda =
+        MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
+    txtReferencia = TextEditingController();
+    imagePicker = ImagePicker();
+    load();
+  }
+
+  load() async {
+    var doc = await FirebaseFirestore.instance
+        .collection('Produtos')
+        .doc(widget.docId)
+        .get();
+    var docStorage = await FirebaseStorage.instance.ref('/images');
+
+    if (doc.exists) {
+      var data = doc.data();
+      if (data != null) {
+        txtDescricao.text = data['descricao'] ?? '';
+        txtPrecoVenda.text = data['precoVenda'] ?? '';
+        txtReferencia.text = data['referencia'] ?? '';
+
+        String imageUrl = data['imageUrl'] ?? '';
+
+        final http.Response response = await http.get(Uri.parse(imageUrl));
+        final List<int> imageData = response.bodyBytes;
+        setState(() {
+          imageFile = File.fromRawPath(Uint8List.fromList(imageData));
+        });
+      }
     }
   }
 
-  void _updateProduto() async {
-    await _firestore.collection('Produtos').doc('produtoId').update({
-      'descricao': txtDescricao.text,
-      'precoVenda': txtPrecoVenda.text,
-      'referencia': txtReferencia.text,
-    });
-    Navigator.pop(context);
-  }
+  void _UpdateProdutos(BuildContext context) {
+    List<String> camposNaoPreenchidos = [];
 
-  // Future<void> _pickImageFromGallery() async {
-  //   final picker = ImagePicker();
-  //   final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-  //   if (pickedImage != null) {
-  //     setState(() {
-  //       imageFile = File(pickedImage.path);
-  //     });
-  //     _uploadImageToFirebase(pickedImage.path);
-  //   }
-  // }
+    if (txtDescricao.text.isEmpty) {
+      camposNaoPreenchidos.add("Descrição");
+    }
 
-  // Future<void> _captureImageFromCamera() async {
-  //   final picker = ImagePicker();
-  //   final pickedImage = await picker.pickImage(source: ImageSource.camera);
-  //   if (pickedImage != null) {
-  //     setState(() {
-  //       imageFile = File(pickedImage.path);
-  //     });
-  //     _uploadImageToFirebase(pickedImage.path);
-  //   }
-  // }
+    if (txtPrecoVenda.text.isEmpty) {
+      camposNaoPreenchidos.add("Preço de venda");
+    }
 
-  _pick(ImageSource source) async {
-    final PickedFile = await imagePicker.pickImage(source: source);
+    if (txtReferencia.text.isEmpty) {
+      camposNaoPreenchidos.add("Referência");
+    }
 
-    if (PickedFile != null) {
-      setState(
-        () {
-          imageFile = File(PickedFile.path);
+    if (imageFile == null) {
+      camposNaoPreenchidos.add("Imagem");
+    }
+
+    if (camposNaoPreenchidos.isNotEmpty) {
+      String mensagem = "Os seguintes campos não foram preenchidos:\n";
+      mensagem += camposNaoPreenchidos.join(",\n");
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Campos Obrigatórios"),
+            content: Text(mensagem),
+            actions: <Widget>[
+              TextButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
         },
       );
-      _uploadImageToFirebase(PickedFile.path);
+      return;
+    }
+
+    if (camposNaoPreenchidos.isEmpty) {
+      String productId = uuid.v4();
+      FirebaseFirestore.instance
+          .collection('Produtos')
+          .doc(widget.docId)
+          .update(
+        {
+          'descricao': txtDescricao.text,
+          'precoVenda': txtPrecoVenda.text,
+          'referencia': txtReferencia.text,
+          'produtoId': productId,
+        },
+      )..catchError((error) {
+          print('Erro ao atualizar o produto: $error');
+        });
+      Navigator.pop(context);
+    }
+  }
+
+  FirebaseStorage _storage = FirebaseStorage.instance;
+
+  _pick(ImageSource source) async {
+    final XFile? xFile = await imagePicker.pickImage(source: source);
+
+    if (xFile != null) {
+      final pickedFile = PickedFile(xFile.path);
+
+      setState(() {
+        imageFile = File(pickedFile.path);
+      });
+      _uploadImageToFirebase(pickedFile.path);
     }
   }
 
@@ -110,7 +175,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Galeria',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -129,7 +194,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Câmera',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -148,7 +213,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Remover',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -227,11 +292,6 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                     prefixText: "R\$",
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^\d+\.?\d{0,2}'),
-                    )
-                  ],
                 ),
                 SizedBox(height: 15),
                 TextField(
@@ -254,10 +314,24 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                       "Atualizar",
                       style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () => _updateProduto(),
+                    onPressed: () => _UpdateProdutos(context),
                   ),
                 ),
                 SizedBox(height: 15),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
+                    ),
+                    child: Text(
+                      "Cancelar",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
               ],
             ),
           ),
