@@ -1,59 +1,54 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:barcode_widget/barcode_widget.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'dart:io';
+import 'package:extended_masked_text/extended_masked_text.dart';
 import 'dart:math';
+import 'package:uuid/uuid.dart';
 
-//Comentário
-class CadastrarProdutosPage extends StatefulWidget {
-  CadastrarProdutosPage({Key? key});
+// Update page
+class UpdateProdutosPage extends StatefulWidget {
+  final String docId;
+  UpdateProdutosPage({required this.docId});
 
   @override
-  _CadastrarProdutosPageState createState() => _CadastrarProdutosPageState();
+  State<UpdateProdutosPage> createState() => _UpdateProdutosPageState();
 }
 
-class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
-  String randomNumbers = '';
+class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
+  @override
+  void initState() {
+    super.initState();
+    load();
+  }
+
+  load() async {
+    var doc = await FirebaseFirestore.instance
+        .collection('Produtos')
+        .doc(widget.docId)
+        .get();
+    txtDescricao.text = doc.data()!['descriçao'];
+    txtPrecoVenda.text = doc.data()!['precoVenda'];
+    txtReferencia.text = doc.data()!['referenica'];
+  }
+
+  final txtDescricao = TextEditingController();
+  final txtPrecoVenda =
+      MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
+  final txtReferencia = TextEditingController();
   final imagePicker = ImagePicker();
   File? imageFile;
+  String randomNumbers = '';
   // Instancie um objeto Uuid
   Uuid uuid = Uuid();
-
-  _pick(ImageSource source) async {
-    final PickedFile = await imagePicker.pickImage(source: source);
-
-    if (PickedFile != null) {
-      setState(
-        () {
-          imageFile = File(PickedFile.path);
-        },
-      );
-      // _uploadImageToFirebase(PickedFile.path);
-    }
-  }
-
-  Future<void> _uploadImageToFirebase(String imagePath) async {
-    final storage = FirebaseStorage.instance;
-    File file = File(imagePath);
-    try {
-      String imageName = "images/img-${DateTime.now().toString()}.png";
-      await storage.ref(imageName).putFile(file);
-      String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
-    } catch (e) {
-      print('Erro ao fazer upload da imagem: $e');
-    }
-  }
 
   void _generatedRandomNumber() {
     setState(() {
@@ -61,12 +56,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
     });
   }
 
-  final txtDescricao = TextEditingController();
-  final txtPrecoVenda =
-      MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
-  final txtReferencia = TextEditingController();
-
-  void _Cadastrar(BuildContext context) {
+  void _UpdateProdutos(BuildContext context) {
     //Lista para armazenar os nomes dos campos não preenchidos
     List<String> camposNaoPreenchidos = [];
 
@@ -136,7 +126,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
       ).then((DocumentReference docRef) {
         print('ID do produto cadastrado: $productId');
         // Upload da imagem para o Firebase
-        _uploadImageToFirebase(imageFile!.path);
+        // _uploadImageToFirebase(imageFile!.path);
 
         // Você pode realizar outras operações com o ID do documento aqui, se necessário
       }).catchError((error) {
@@ -146,6 +136,33 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
       Navigator.pop(context);
     }
   }
+
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  FirebaseStorage _storage = FirebaseStorage.instance;
+
+  // _pick(ImageSource source) async {
+  //   final PickedFile = await imagePicker.pickImage(source: source);
+
+  //   if (PickedFile != null) {
+  //     setState(
+  //       () {
+  //         imageFile = File(PickedFile.path);
+  //       },
+  //     );
+  //     _uploadImageToFirebase(PickedFile.path);
+  //   }
+  // }
+
+  // Future<void> _uploadImageToFirebase(String imagePath) async {
+  //   final storage = FirebaseStorage.instance;
+  //   try {
+  //     String imageName = DateTime.now().millisecondsSinceEpoch.toString();
+  //     await storage.ref('images/$imageName').putString(imagePath);
+  //     String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
+  //   } catch (e) {
+  //     print('Erro ao fazer upload da imagem: $e');
+  //   }
+  // }
 
   void _ShowOpcoesBottomSheet() {
     showModalBottomSheet(
@@ -171,7 +188,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _pick(ImageSource.gallery);
+                  // _pick(ImageSource.gallery);
                 },
               ),
               ListTile(
@@ -190,7 +207,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _pick(ImageSource.camera);
+                  // _pick(ImageSource.camera);
                 },
               ),
               ListTile(
@@ -276,7 +293,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 15),
-                TextField(
+                TextFormField(
                   controller: txtPrecoVenda,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -284,6 +301,11 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                     prefixText: "R\$",
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d+\.?\d{0,2}'),
+                    )
+                  ],
                 ),
                 SizedBox(height: 15),
                 TextField(
@@ -292,13 +314,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                     border: OutlineInputBorder(),
                     hintText: "Referência",
                   ),
-                ),
-                SizedBox(height: 15),
-                ElevatedButton(
-                  onPressed: _generatedRandomNumber,
-                  child: Text(randomNumbers.isEmpty
-                      ? 'Gerar Novo Código de barras'
-                      : 'Código de Barras: $randomNumbers'),
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 15),
                 Container(
@@ -309,10 +325,10 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                           MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     child: Text(
-                      "Cadastrar",
+                      "Atualizar",
                       style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () => _Cadastrar(context),
+                    onPressed: () => _UpdateProdutos(context),
                   ),
                 ),
                 SizedBox(height: 15),
@@ -324,10 +340,10 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                           MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     child: Text(
-                      "Resumo",
+                      "Cancelar",
                       style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () => Navigator.pushNamed(context, '/home'),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
               ],
