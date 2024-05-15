@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scanner_app/screens/atualizacaodeVendas.dart';
 import 'package:scanner_app/screens/cadastrarProdutos_page.dart';
+import 'package:scanner_app/screens/vendasScreen.dart';
 import 'screens/atualizarProdutos.dart';
 import 'screens/telaProduto.dart';
 import 'screens/homepage.dart';
@@ -28,6 +29,8 @@ class ScannerApp extends StatelessWidget {
             leituraCodigoBarras(), // rota para a tela leitura codigo de barras
         "/cadastroVendas": (context) =>
             CadastroVendas(), // rota para a tela leitura cadastro de vendas
+        "/vendasScreen": (context) =>
+            SelecaoVendasScreen(), // rota para a tela leitura cadastro de vendas
         "/tabelaProdutos": (context) =>
             TelaProduto(), // rota para a tela leitura tabela de produtos
         "/cadastroClientes": (context) =>
