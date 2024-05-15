@@ -169,7 +169,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.download,
+                      PhosphorIcons.download(),
                     ),
                   ),
                 ),
@@ -186,7 +186,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.camera,
+                      PhosphorIcons.camera(),
                       color: Colors.grey[500],
                     ),
                   ),
@@ -205,7 +205,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.trash,
+                      PhosphorIcons.trash(),
                       color: Colors.grey[500],
                     ),
                   ),
@@ -262,7 +262,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                             child: IconButton(
                               onPressed: _ShowOpcoesBottomSheet,
                               icon: Icon(
-                                PhosphorIcons.pencilSimple,
+                                PhosphorIcons.pencilSimple(),
                               ),
                             ),
                           ),

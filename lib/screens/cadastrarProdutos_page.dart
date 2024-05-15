@@ -161,7 +161,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.download,
+                      PhosphorIcons.download(),
                     ),
                   ),
                 ),
@@ -179,7 +179,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.camera,
+                      PhosphorIcons.camera(),
                       color: Colors.grey[500],
                     ),
                   ),
@@ -198,7 +198,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.trash,
+                      PhosphorIcons.trash(),
                       color: Colors.grey[500],
                     ),
                   ),
@@ -255,7 +255,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                             child: IconButton(
                               onPressed: _ShowOpcoesBottomSheet,
                               icon: Icon(
-                                PhosphorIcons.pencilSimple,
+                                PhosphorIcons.pencilSimple(),
                               ),
                             ),
                           ),

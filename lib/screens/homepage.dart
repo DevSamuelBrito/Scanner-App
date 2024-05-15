@@ -7,8 +7,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment
-            .center, // isso daqui vai centralizar os elementos verticalmente
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
             child: Center(
@@ -76,17 +75,17 @@ class HomePage extends StatelessWidget {
                 TextButton(
                   style: StylesProntos.estiloBotao,
                   onPressed: () =>
-                      Navigator.pushNamed(context, "/cadastroClientes"),
+                      Navigator.pushNamed(context, "/clientes"),
                   child: Text(
-                    'Cadastrar um Cliente',
+                    'Clientes',
                     style: StylesProntos.textBotao,
                   ),
                 ),
                 SizedBox(height: 30),
               ],
             ),
-          ],
-        ),
+          ), // Aqui estava faltando o fechamento da chave
+        ], // Aqui estava faltando a chave de fechamento do children
       ),
     );
   }
