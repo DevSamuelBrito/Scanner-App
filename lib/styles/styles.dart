@@ -7,14 +7,13 @@ class StylesProntos {
     fontWeight: FontWeight.bold,
     color: Colors.black,
   );
-
-  static const TextStyle textBotao = TextStyle(
-    fontSize: 16,
-    color: Colors.white,
-  );
+static const TextStyle textBotao = TextStyle(
+  fontSize: 16,
+  color: Colors.white, // Cor em hexadecimal
+);
 
   static final ButtonStyle estiloBotao = TextButton.styleFrom(
-    backgroundColor: Colors.black,
+    backgroundColor: Color(0xFFDA8208),
     maximumSize: Size.fromHeight(50), // Define a altura mínima do botão
     fixedSize: Size.fromWidth(300), //
     shape: RoundedRectangleBorder(
