@@ -1,107 +1,95 @@
-// ignore_for_file: prefer_const_constructors
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
-import 'package:barcode_widget/barcode_widget.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:uuid/uuid.dart';
-import 'package:extended_masked_text/extended_masked_text.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:barcode_widget/barcode_widget.dart';
 import 'dart:io';
+import 'package:extended_masked_text/extended_masked_text.dart';
 import 'dart:math';
+import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
 
-//Comentário
-class CadastrarProdutosPage extends StatefulWidget {
-  CadastrarProdutosPage({Key? key});
+// Update page
+class UpdateProdutosPage extends StatefulWidget {
+  final String docId;
+  UpdateProdutosPage({required this.docId});
 
   @override
-  _CadastrarProdutosPageState createState() => _CadastrarProdutosPageState();
+  State<UpdateProdutosPage> createState() => _UpdateProdutosPageState();
 }
 
-class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
-  String randomNumbers = '';
-  final imagePicker = ImagePicker();
+class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
+  late TextEditingController txtDescricao;
+  late MoneyMaskedTextController txtPrecoVenda;
+  late TextEditingController txtReferencia;
+  late ImagePicker imagePicker;
   File? imageFile;
-  // Instancie um objeto Uuid
   Uuid uuid = Uuid();
 
-  _pick(ImageSource source) async {
-    final PickedFile = await imagePicker.pickImage(source: source);
+  @override
+  void initState() {
+    super.initState();
+    txtDescricao = TextEditingController();
+    txtPrecoVenda =
+        MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
+    txtReferencia = TextEditingController();
+    imagePicker = ImagePicker();
+    load();
+  }
 
-    if (PickedFile != null) {
-      setState(
-        () {
-          imageFile = File(PickedFile.path);
-        },
-      );
-      // _uploadImageToFirebase(PickedFile.path);
+  load() async {
+    var doc = await FirebaseFirestore.instance
+        .collection('Produtos')
+        .doc(widget.docId)
+        .get();
+    var docStorage = await FirebaseStorage.instance.ref('/images');
+
+    if (doc.exists) {
+      var data = doc.data();
+      if (data != null) {
+        txtDescricao.text = data['descricao'] ?? '';
+        txtPrecoVenda.text = data['precoVenda'] ?? '';
+        txtReferencia.text = data['referencia'] ?? '';
+
+        String imageUrl = data['imageUrl'] ?? '';
+
+        final http.Response response = await http.get(Uri.parse(imageUrl));
+        final List<int> imageData = response.bodyBytes;
+        setState(() {
+          imageFile = File.fromRawPath(Uint8List.fromList(imageData));
+        });
+      }
     }
   }
 
-  Future<void> _uploadImageToFirebase(String imagePath) async {
-    final storage = FirebaseStorage.instance;
-    File file = File(imagePath);
-    try {
-      String imageName = "images/img-${DateTime.now().toString()}.png";
-      await storage.ref(imageName).putFile(file);
-      String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
-    } catch (e) {
-      print('Erro ao fazer upload da imagem: $e');
-    }
-  }
-
-  void _generatedRandomNumber() {
-    setState(() {
-      randomNumbers = List.generate(12, (index) => Random().nextInt(10)).join();
-    });
-  }
-
-  final txtDescricao = TextEditingController();
-  final txtPrecoVenda =
-      MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
-  final txtReferencia = TextEditingController();
-
-  void _Cadastrar(BuildContext context) {
-    //Lista para armazenar os nomes dos campos não preenchidos
+  void _UpdateProdutos(BuildContext context) {
     List<String> camposNaoPreenchidos = [];
 
-    //Verifica se o campo de descrição está vazio
     if (txtDescricao.text.isEmpty) {
       camposNaoPreenchidos.add("Descrição");
     }
 
-    //Verifica se o campo de preço de venda está vazio
     if (txtPrecoVenda.text.isEmpty) {
       camposNaoPreenchidos.add("Preço de venda");
     }
 
-    //Verifica se o campo de Refêrencia está vazio
     if (txtReferencia.text.isEmpty) {
       camposNaoPreenchidos.add("Referência");
     }
 
-    //Verifica se o código de barras está vazio
-    if (randomNumbers.isEmpty) {
-      camposNaoPreenchidos.add("Código de Barras");
-    }
-
-    //Verifica se a imagem está vazia
     if (imageFile == null) {
       camposNaoPreenchidos.add("Imagem");
     }
 
-    //Se houver campos não preenchidos, mostra o dialogo de alerta
     if (camposNaoPreenchidos.isNotEmpty) {
-      //Monsta a mensagem de alerta com os nomes dos campos não preenchidos
       String mensagem = "Os seguintes campos não foram preenchidos:\n";
       mensagem += camposNaoPreenchidos.join(",\n");
 
-      //Mostra o Dialogo de alerta
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -119,31 +107,51 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
           );
         },
       );
-      return; //Sai do método caso haja campos não preenchidos
+      return;
     }
 
     if (camposNaoPreenchidos.isEmpty) {
-      // Gere um productId único utilizando a função v4 do uuid
       String productId = uuid.v4();
-      FirebaseFirestore.instance.collection('Produtos').add(
+      FirebaseFirestore.instance
+          .collection('Produtos')
+          .doc(widget.docId)
+          .update(
         {
           'descricao': txtDescricao.text,
           'precoVenda': txtPrecoVenda.text,
           'referencia': txtReferencia.text,
-          'codigoBarras': randomNumbers,
           'produtoId': productId,
         },
-      ).then((DocumentReference docRef) {
-        print('ID do produto cadastrado: $productId');
-        // Upload da imagem para o Firebase
-        _uploadImageToFirebase(imageFile!.path);
-
-        // Você pode realizar outras operações com o ID do documento aqui, se necessário
-      }).catchError((error) {
-        // Trate erros, se houver algum
-        print('Erro ao cadastrar o produto: $error');
-      });
+      )..catchError((error) {
+          print('Erro ao atualizar o produto: $error');
+        });
       Navigator.pop(context);
+    }
+  }
+
+  FirebaseStorage _storage = FirebaseStorage.instance;
+
+  _pick(ImageSource source) async {
+    final XFile? xFile = await imagePicker.pickImage(source: source);
+
+    if (xFile != null) {
+      final pickedFile = PickedFile(xFile.path);
+
+      setState(() {
+        imageFile = File(pickedFile.path);
+      });
+      _uploadImageToFirebase(pickedFile.path);
+    }
+  }
+
+  Future<void> _uploadImageToFirebase(String imagePath) async {
+    final storage = FirebaseStorage.instance;
+    try {
+      String imageName = DateTime.now().millisecondsSinceEpoch.toString();
+      await storage.ref('images/$imageName').putString(imagePath);
+      String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
+    } catch (e) {
+      print('Erro ao fazer upload da imagem: $e');
     }
   }
 
@@ -167,7 +175,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                 ),
                 title: Text(
                   'Galeria',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -186,7 +194,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                 ),
                 title: Text(
                   'Câmera',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -205,7 +213,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                 ),
                 title: Text(
                   'Remover',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -276,7 +284,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 15),
-                TextField(
+                TextFormField(
                   controller: txtPrecoVenda,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -292,13 +300,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                     border: OutlineInputBorder(),
                     hintText: "Referência",
                   ),
-                ),
-                SizedBox(height: 15),
-                ElevatedButton(
-                  onPressed: _generatedRandomNumber,
-                  child: Text(randomNumbers.isEmpty
-                      ? 'Gerar Novo Código de barras'
-                      : 'Código de Barras: $randomNumbers'),
+                  keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 15),
                 Container(
@@ -309,10 +311,10 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                           MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     child: Text(
-                      "Cadastrar",
+                      "Atualizar",
                       style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () => _Cadastrar(context),
+                    onPressed: () => _UpdateProdutos(context),
                   ),
                 ),
                 SizedBox(height: 15),
@@ -324,10 +326,10 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                           MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     child: Text(
-                      "Resumo",
+                      "Cancelar",
                       style: TextStyle(color: Colors.white),
                     ),
-                    onPressed: () => Navigator.pushNamed(context, '/home'),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
               ],
