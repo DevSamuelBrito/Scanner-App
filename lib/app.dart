@@ -41,6 +41,6 @@ class ScannerApp extends StatelessWidget {
         //     UpdateProdutosPage(), //rota para a tela de atualizar o produto
       },
       initialRoute: '/home',
-    );
+    );  
   }
 }

@@ -85,8 +85,8 @@ class HomePage extends StatelessWidget {
                 SizedBox(height: 30),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
