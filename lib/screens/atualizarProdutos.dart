@@ -175,7 +175,6 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Galeria',
-                  style: Theme.of(context).textTheme.bodyText1,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -194,7 +193,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Câmera',
-                  style: Theme.of(context).textTheme.bodyText1,
+                  
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -213,7 +212,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Remover',
-                  style: Theme.of(context).textTheme.bodyText1,
+                  
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
