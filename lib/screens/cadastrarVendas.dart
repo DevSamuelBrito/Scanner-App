@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:scanner_app/styles/styles.dart';
 
 class Product {
   String? idPronto;
@@ -51,7 +53,7 @@ class _CadastroVendasState extends State<CadastroVendas> {
 
     FirebaseFirestore.instance.collection('Vendas').add({
       'Data': returnTime()['data'],
-      'Time':  returnTime()['time'],
+      'Time': returnTime()['time'],
       'nomeCliente': nomeCliente.text,
       'produtos': produtos.map((produto) {
         return {
@@ -89,7 +91,12 @@ class _CadastroVendasState extends State<CadastroVendas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro Vendas"),
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        title: Text(
+          "Cadastro Vendas",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
@@ -146,23 +153,35 @@ class _CadastroVendasState extends State<CadastroVendas> {
               ),
             ),
             if (produtos.isNotEmpty)
-              ElevatedButton(
+              TextButton(
+                style: StylesProntos.estiloBotaoRed(context),
                 onPressed: removerUltimosProdutos,
-                child: Text('Remover Últimos 3 Produtos'),
+                child: Text(
+                  'Remover Últimos 3 Produtos',
+                  style: StylesProntos.textBotao(context),
+                ),
               ),
             SizedBox(height: 16.0),
-            ElevatedButton(
+            TextButton(
+              style: StylesProntos.estiloBotaoVerde(context),
               onPressed: () {
                 setState(() {
                   produtos.add(Product());
                 });
               },
-              child: Text('Adicionar mais um Produto'),
+              child: Text(
+                'Adicionar mais um Produto',
+                style: StylesProntos.textBotao(context),
+              ),
             ),
             SizedBox(height: 16.0),
-            ElevatedButton(
+            TextButton(
+              style: StylesProntos.estiloBotaoPadrao(context),
               onPressed: () => enviarProdutosVendas(context),
-              child: Text('Cadastrar Venda'),
+              child: Text(
+                'Cadastrar Vendas',
+                style: StylesProntos.textBotao(context),
+              ),
             ),
           ],
         ),

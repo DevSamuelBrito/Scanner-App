@@ -6,6 +6,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Color(0xFFDA8208),
+        title: Text(
+          "Bem Vindo",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -14,7 +22,7 @@ class HomePage extends StatelessWidget {
               child: Container(
                 child: Image.asset(
                   "lib/images/icon.png",
-                  width: 200,
+                  width: 220,
                 ),
               ),
             ),
@@ -23,62 +31,62 @@ class HomePage extends StatelessWidget {
             child: Column(
               children: [
                 TextButton(
-                  style: StylesProntos.estiloBotao,
+                  style: StylesProntos.estiloBotaoPadrao(context),
                   onPressed: () =>
                       Navigator.pushNamed(context, "/tabelaProdutos"),
                   child: Text(
                     'Tabela de Produtos',
-                    style: StylesProntos.textBotao,
+                    style: StylesProntos.textBotao(context),
                   ),
                 ),
                 SizedBox(height: 30),
                 TextButton(
-                  style: StylesProntos.estiloBotao,
+                  style: StylesProntos.estiloBotaoPadrao(context),
                   onPressed: () =>
                       Navigator.pushNamed(context, "/cadastroProdutos"),
                   child: Text(
                     'Registrar Produto',
-                    style: StylesProntos.textBotao,
+                    style: StylesProntos.textBotao(context),
                   ),
                 ),
                 SizedBox(height: 30),
                 TextButton(
-                  style: StylesProntos.estiloBotao,
+                  style: StylesProntos.estiloBotaoPadrao(context),
                   onPressed: () =>
                       Navigator.pushNamed(context, "/leituraCodigoBarras"),
                   child: Text(
                     'Leitura Produto',
-                    style: StylesProntos.textBotao,
+                    style: StylesProntos.textBotao(context),
                   ),
                 ),
                 SizedBox(height: 30),
                 TextButton(
-                  style: StylesProntos.estiloBotao,
+                  style: StylesProntos.estiloBotaoPadrao(context),
                   onPressed: () =>
                       Navigator.pushNamed(context, "/cadastroVendas"),
                   child: Text(
                     'Cadastro de Venda',
-                    style: StylesProntos.textBotao,
+                    style: StylesProntos.textBotao(context),
                   ),
                 ),
                 SizedBox(height: 30),
                 TextButton(
-                  style: StylesProntos.estiloBotao,
+                  style: StylesProntos.estiloBotaoPadrao(context),
                   onPressed: () =>
                       Navigator.pushNamed(context, "/vendasScreen"),
                   child: Text(
                     'Tela de Vendas',
-                    style: StylesProntos.textBotao,
+                    style: StylesProntos.textBotao(context),
                   ),
                 ),
                 SizedBox(height: 30),
                 TextButton(
-                  style: StylesProntos.estiloBotao,
+                  style: StylesProntos.estiloBotaoPadrao(context),
                   onPressed: () =>
                       Navigator.pushNamed(context, "/clientes"),
                   child: Text(
                     'Clientes',
-                    style: StylesProntos.textBotao,
+                    style: StylesProntos.textBotao(context),
                   ),
                 ),
                 SizedBox(height: 30),
