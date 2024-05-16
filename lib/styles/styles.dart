@@ -23,11 +23,11 @@ class StylesProntos {
   );
 
   // Estilo do texto do botão
-  static TextStyle textBotao(BuildContext context) {
-    final double fontSize = calculateFontSize(context, 12); // 16 é o tamanho base da fonte
+  static TextStyle textBotao(BuildContext context, String tamanho, Color color) {
+    final double fontSize = calculateFontSize(context, double.parse(tamanho)); // 16 é o tamanho base da fonte
     return TextStyle(
       fontSize: fontSize,
-      color: Colors.white,
+      color: color,
     );
   }
 
@@ -35,7 +35,7 @@ class StylesProntos {
   static ButtonStyle estiloBotaoPadrao(BuildContext context) {
     final double buttonWidth = calculateButtonWidth(context, 230); // 300 é a largura base do botão
     return TextButton.styleFrom(
-      backgroundColor: Color(0xFFDA8208),
+      backgroundColor: Color.fromARGB(255, 218, 169, 8),
       minimumSize: Size(buttonWidth, 50), // Define o tamanho mínimo do botão
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -43,13 +43,35 @@ class StylesProntos {
     );
   }
 
+  static ButtonStyle pequenoBotaoBlue(BuildContext context) {
+    final double buttonWidth = calculateButtonWidth(context, 100); // 300 é a largura base do botão
+    return TextButton.styleFrom(
+      backgroundColor: Colors.blue,
+      minimumSize: Size(buttonWidth, 50), // Define o tamanho mínimo do botão
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50),
+      ),
+    );
+  }
+
   static ButtonStyle estiloBotaoRed(BuildContext context) {
-    final double buttonWidth = calculateButtonWidth(context, 230); // 300 é a largura base do botão
+    final double buttonWidth = calculateButtonWidth(context, 50); // 300 é a largura base do botão
     return TextButton.styleFrom(
       backgroundColor: Colors.red,
       minimumSize: Size(buttonWidth, 50), // Define o tamanho mínimo do botão
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+
+  static ButtonStyle pequenoBotaoRed(BuildContext context) {
+    final double buttonWidth = calculateButtonWidth(context, 100); // 300 é a largura base do botão
+    return TextButton.styleFrom(
+      backgroundColor: Colors.red,
+      minimumSize: Size(buttonWidth, 50), // Define o tamanho mínimo do botão
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50),
       ),
     );
   }
@@ -61,6 +83,16 @@ class StylesProntos {
       minimumSize: Size(buttonWidth, 50), // Define o tamanho mínimo do botão
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+  static ButtonStyle pequenoBotaoVerde(BuildContext context) {
+    final double buttonWidth = calculateButtonWidth(context, 100); // 300 é a largura base do botão
+    return TextButton.styleFrom(
+      backgroundColor: Colors.green,
+      minimumSize: Size(buttonWidth, 50), // Define o tamanho mínimo do botão
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(50),
       ),
     );
   }

@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFDA8208),
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
         title: Text(
           "Bem Vindo",
           style: TextStyle(color: Colors.white),
@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/tabelaProdutos"),
                   child: Text(
                     'Tabela de Produtos',
-                    style: StylesProntos.textBotao(context),
+                    style: StylesProntos.textBotao(context,'20',Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -46,7 +46,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/cadastroProdutos"),
                   child: Text(
                     'Registrar Produto',
-                    style: StylesProntos.textBotao(context),
+                    style: StylesProntos.textBotao(context,'20',Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/leituraCodigoBarras"),
                   child: Text(
                     'Leitura Produto',
-                    style: StylesProntos.textBotao(context),
+                    style: StylesProntos.textBotao(context,'20',Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/cadastroVendas"),
                   child: Text(
                     'Cadastro de Venda',
-                    style: StylesProntos.textBotao(context),
+                    style: StylesProntos.textBotao(context,'20',Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -76,7 +76,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/vendasScreen"),
                   child: Text(
                     'Tela de Vendas',
-                    style: StylesProntos.textBotao(context),
+                    style: StylesProntos.textBotao(context,'20',Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -86,7 +86,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/clientes"),
                   child: Text(
                     'Clientes',
-                    style: StylesProntos.textBotao(context),
+                    style: StylesProntos.textBotao(context,'20',Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
