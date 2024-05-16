@@ -91,13 +91,12 @@ class _CadastroVendasState extends State<CadastroVendas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
-        title: Text(
-          "Cadastro Vendas",
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true
-      ),
+          backgroundColor: Color.fromARGB(255, 218, 169, 8),
+          title: Text(
+            "Cadastro Vendas",
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true),
       body: Container(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -117,6 +116,8 @@ class _CadastroVendasState extends State<CadastroVendas> {
                   for (var produto in produtos)
                     Column(
                       children: [
+                        Text('Produto ${produtos.indexOf(produto) + 1}', style: StylesProntos.textBotao(context, '18',Colors.black),),
+                      //aqui ficariam os index dos produtos
                         TextField(
                           decoration: InputDecoration(
                             hintText: 'Insira o id produto',
@@ -152,36 +153,41 @@ class _CadastroVendasState extends State<CadastroVendas> {
                 ],
               ),
             ),
-            if (produtos.isNotEmpty)
-              TextButton(
-                style: StylesProntos.estiloBotaoRed(context),
-                onPressed: removerUltimosProdutos,
-                child: Text(
-                  'Remover Últimos 3 Produtos',
-                  style: StylesProntos.textBotao(context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (produtos.isNotEmpty)
+                  TextButton(
+                    style: StylesProntos.pequenoBotaoRed(context),
+                    onPressed: removerUltimosProdutos,
+                    child: Text(
+                      '-',
+                      style: StylesProntos.textBotao(context, '20', Colors.white),
+                    ),
+                  ),
+                
+                TextButton(
+                  style: StylesProntos.pequenoBotaoVerde(context),
+                  onPressed: () {
+                    setState(() {
+                      produtos.add(Product());
+                    });
+                  },
+                  child: Text(
+                    '+',
+                    style: StylesProntos.textBotao(context, '20',Colors.white),
+                  ),
                 ),
-              ),
-            SizedBox(height: 16.0),
-            TextButton(
-              style: StylesProntos.estiloBotaoVerde(context),
-              onPressed: () {
-                setState(() {
-                  produtos.add(Product());
-                });
-              },
-              child: Text(
-                'Adicionar mais um Produto',
-                style: StylesProntos.textBotao(context),
-              ),
-            ),
-            SizedBox(height: 16.0),
-            TextButton(
-              style: StylesProntos.estiloBotaoPadrao(context),
-              onPressed: () => enviarProdutosVendas(context),
-              child: Text(
-                'Cadastrar Vendas',
-                style: StylesProntos.textBotao(context),
-              ),
+                
+                TextButton(
+                  style: StylesProntos.pequenoBotaoBlue(context),
+                  onPressed: () => enviarProdutosVendas(context),
+                  child: Text(
+                    '✓',
+                    style: StylesProntos.textBotao(context, '20',Colors.white),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
