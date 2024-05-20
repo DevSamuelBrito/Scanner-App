@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import '../styles/styles.dart';
-//comentario commit
+
 class HomePage extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,12 +21,12 @@ class HomePage extends StatelessWidget {
               child: Container(
                 child: Image.asset(
                   "lib/images/icon.png",
-                  width: 220,
+                  width: 200,
                 ),
               ),
             ),
           ),
-          Center(
+          SingleChildScrollView(
             child: Column(
               children: [
                 TextButton(
@@ -36,7 +35,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/tabelaProdutos"),
                   child: Text(
                     'Tabela de Produtos',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -46,7 +45,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/cadastroProdutos"),
                   child: Text(
                     'Registrar Produto',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -56,7 +55,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/leituraCodigoBarras"),
                   child: Text(
                     'Leitura Produto',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -66,7 +65,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/cadastroVendas"),
                   child: Text(
                     'Cadastro de Venda',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -76,24 +75,23 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/vendasScreen"),
                   child: Text(
                     'Tela de Vendas',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
                 TextButton(
                   style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, "/clientes"),
+                  onPressed: () => Navigator.pushNamed(context, "/clientes"),
                   child: Text(
                     'Clientes',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
               ],
             ),
-          ), // Aqui estava faltando o fechamento da chave
-        ], // Aqui estava faltando a chave de fechamento do children
+          ),
+        ],
       ),
     );
   }
