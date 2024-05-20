@@ -116,8 +116,12 @@ class _CadastroVendasState extends State<CadastroVendas> {
                   for (var produto in produtos)
                     Column(
                       children: [
-                        Text('Produto ${produtos.indexOf(produto) + 1}', style: StylesProntos.textBotao(context, '18',Colors.black),),
-                      //aqui ficariam os index dos produtos
+                        Text(
+                          'Produto ${produtos.indexOf(produto) + 1}',
+                          style: StylesProntos.textBotao(
+                              context, '18', Colors.black),
+                        ),
+                        //aqui ficariam os index dos produtos
                         TextField(
                           decoration: InputDecoration(
                             hintText: 'Insira o id produto',
@@ -162,29 +166,30 @@ class _CadastroVendasState extends State<CadastroVendas> {
                     onPressed: removerUltimosProdutos,
                     child: Text(
                       '-',
-                      style: StylesProntos.textBotao(context, '20', Colors.white),
+                      style:
+                          StylesProntos.textBotao(context, '20', Colors.white),
                     ),
                   ),
-                
                 TextButton(
                   style: StylesProntos.pequenoBotaoVerde(context),
                   onPressed: () {
-                    setState(() {
-                      produtos.add(Product());
-                    });
+                    setState(
+                      () {
+                        produtos.add(Product());
+                      },
+                    );
                   },
                   child: Text(
                     '+',
-                    style: StylesProntos.textBotao(context, '20',Colors.white),
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
-                
                 TextButton(
                   style: StylesProntos.pequenoBotaoBlue(context),
                   onPressed: () => enviarProdutosVendas(context),
                   child: Text(
                     '✓',
-                    style: StylesProntos.textBotao(context, '20',Colors.white),
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
               ],
