@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:scanner_app/styles/styles.dart';
 
 class Product {
   String? idPronto;
@@ -117,61 +118,79 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
                 itemBuilder: (context, index) {
                   Map<String, dynamic> produto = produtos[index];
                   return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('ID do Produto:'),
-                        TextField(
-                          controller:
-                              TextEditingController(text: produto['idProduto']),
-                          onChanged: (value) {
-                            produtos[index]['idProduto'] = value;
-                          },
-                        ),
-                        SizedBox(height: 10.0),
-                        Text('Nome do Produto:'),
-                        TextField(
-                          controller:
-                              TextEditingController(text: produto['nomeProd']),
-                          onChanged: (value) {
-                            produtos[index]['nomeProd'] = value;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        Text('Quantidade:'),
-                        TextField(
-                          controller:
-                              TextEditingController(text: produto['qtd']),
-                          onChanged: (value) {
-                            produtos[index]['qtd'] = value;
-                          },
-                        ),
-                        SizedBox(height: 10),
-                      ]);
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('ID do Produto:'),
+                      TextField(
+                        controller:
+                            TextEditingController(text: produto['idProduto']),
+                        onChanged: (value) {
+                          produtos[index]['idProduto'] = value;
+                        },
+                      ),
+                      SizedBox(height: 10.0),
+                      Text('Nome do Produto:'),
+                      TextField(
+                        controller:
+                            TextEditingController(text: produto['nomeProd']),
+                        onChanged: (value) {
+                          produtos[index]['nomeProd'] = value;
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      Text('Quantidade:'),
+                      TextField(
+                        controller: TextEditingController(text: produto['qtd']),
+                        onChanged: (value) {
+                          produtos[index]['qtd'] = value;
+                        },
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  );
                 },
               ),
             ),
-            if (produtos.isNotEmpty)
-              ElevatedButton(
-                onPressed: removerUltimosProdutos,
-                child: Text('Remover Últimos 3 Produtos'),
-              ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  produtos.add({
-                    'idProduto': '',
-                    'nomeProd': '',
-                    'qtd': '',
-                  });
-                });
-              },
-              child: Text('Adicionar mais um Produto'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () => _AtualizarProdutosVendas(),
-              child: Text('Cadastrar Venda'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (produtos.isNotEmpty)
+                  TextButton(
+                    style: StylesProntos.pequenoBotaoRed(context),
+                    onPressed: removerUltimosProdutos,
+                    child: Text(
+                      '-',
+                      style:
+                          StylesProntos.textBotao(context, '20', Colors.white),
+                    ),
+                  ),
+                TextButton(
+                  style: StylesProntos.pequenoBotaoVerde(context),
+                  onPressed: () {
+                    setState(
+                      () {
+                        produtos.add({
+                          'idProduto': '',
+                          'nomeProd': '',
+                          'qtd': '',
+                        });
+                      },
+                    );
+                  },
+                  child: Text(
+                    '+',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  ),
+                ),
+                TextButton(
+                  style: StylesProntos.pequenoBotaoBlue(context),
+                  onPressed: () => _AtualizarProdutosVendas(),
+                  child: Text(
+                    '✓',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
