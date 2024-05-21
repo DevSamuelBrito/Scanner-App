@@ -95,7 +95,9 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro Vendas"),
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        title: Text("Editar Vendas"),
+        centerTitle: true,
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
@@ -104,15 +106,15 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
             TextField(
               controller: nomeCliente,
               decoration: InputDecoration(
+                label: Text('Nome do Cliente'),
                 hintText: nomeCliente!.text.isNotEmpty
                     ? nomeCliente?.text
                     : 'Nome do Cliente',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 24),
             Expanded(
-              // Envolve a seção de produtos em um Expanded para ocupar todo o espaço disponível
               child: ListView.builder(
                 itemCount: produtos.length,
                 itemBuilder: (context, index) {
@@ -120,17 +122,34 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('ID do Produto:'),
-                      TextField(
-                        controller:
-                            TextEditingController(text: produto['idProduto']),
+                      Text(
+                        'Editar Produto ${produtos.indexOf(produto) + 1}',
+                        style: StylesProntos.textBotao(
+                            context, '18', Colors.black),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          label: Text('ID do Produto'),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        controller: TextEditingController(
+                          text: produto['idProduto']?.toString() ?? '',
+                        ),
                         onChanged: (value) {
-                          produtos[index]['idProduto'] = value;
+                          produto['idProduto'] = value;
                         },
                       ),
                       SizedBox(height: 10.0),
-                      Text('Nome do Produto:'),
-                      TextField(
+                      TextFormField(
+                        decoration: InputDecoration(
+                          label: Text('Nome do Produto'),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                         controller:
                             TextEditingController(text: produto['nomeProd']),
                         onChanged: (value) {
@@ -138,14 +157,19 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
                         },
                       ),
                       SizedBox(height: 10),
-                      Text('Quantidade:'),
-                      TextField(
+                      TextFormField(
+                        decoration: InputDecoration(
+                          label: Text('Quantidade'),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                         controller: TextEditingController(text: produto['qtd']),
                         onChanged: (value) {
                           produtos[index]['qtd'] = value;
                         },
                       ),
-                      SizedBox(height: 10),
+                      SizedBox(height: 50),
                     ],
                   );
                 },

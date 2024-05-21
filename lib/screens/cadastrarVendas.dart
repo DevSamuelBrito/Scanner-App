@@ -101,11 +101,13 @@ class _CadastroVendasState extends State<CadastroVendas> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
+            TextFormField(
               controller: nomeCliente,
               decoration: InputDecoration(
-                hintText: 'Insira o nome do cliente',
-                border: OutlineInputBorder(),
+                label: Text('Insira o nome do cliente'),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
             SizedBox(height: 16.0),
@@ -121,31 +123,37 @@ class _CadastroVendasState extends State<CadastroVendas> {
                           style: StylesProntos.textBotao(
                               context, '18', Colors.black),
                         ),
-                        //aqui ficariam os index dos produtos
-                        TextField(
+                        SizedBox(height: 10.0),
+                        TextFormField(
                           decoration: InputDecoration(
-                            hintText: 'Insira o id produto',
-                            border: OutlineInputBorder(),
+                            label: Text('Insira o Id produto'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           onChanged: (value) {
                             produto.idPronto = value;
                           },
                         ),
                         SizedBox(height: 10),
-                        TextField(
+                        TextFormField(
                           decoration: InputDecoration(
-                            hintText: 'Insira o nome do produto',
-                            border: OutlineInputBorder(),
+                            label: Text('Insira o Nome do produto'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           onChanged: (value) {
                             produto.nomeProd = value;
                           },
                         ),
                         SizedBox(height: 10),
-                        TextField(
+                        TextFormField(
                           decoration: InputDecoration(
-                            hintText: 'Quantidade',
-                            border: OutlineInputBorder(),
+                            label: Text('Insira a Quantidade'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           onChanged: (value) {
                             produto.qtd = value;
