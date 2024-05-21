@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 // ignore_for_file: prefer_const_constructors
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -332,3 +333,17 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
     );
   }
 }
+=======
+import "package:flutter/material.dart";
+
+class cadastroProdutos extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("cadastro produtos"),
+      ),
+    );
+  }
+}
+>>>>>>> Stashed changes

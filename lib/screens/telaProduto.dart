@@ -17,6 +17,10 @@ class TelaProduto extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
+<<<<<<< Updated upstream
+=======
+          backgroundColor: Colors.blue,
+>>>>>>> Stashed changes
           onPressed: () => Navigator.pushNamed(context, "/cadastroProdutos"),
         ),
         body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -29,6 +33,7 @@ class TelaProduto extends StatelessWidget {
               var docs = snapshot.data!.docs;
 
               return ListView(
+<<<<<<< Updated upstream
                 children: docs
                     .map(
                       (doc) => Dismissible(
@@ -60,6 +65,66 @@ class TelaProduto extends StatelessWidget {
                       ),
                     )
                     .toList(),
+=======
+                children: snapshot.data!.docs.map(
+                  (DocumentSnapshot document) {
+                    Map<String, dynamic> data =
+                        document.data() as Map<String, dynamic>;
+                    return ListTile(
+                      title: Text(data['descricao']),
+                      subtitle: Text(data['precoVenda']),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UpdateProdutosPage(document),
+                                ),
+                              );
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Confirmar exclusão'),
+                                  content: Text(
+                                      'Tem certeza que deseja excluir este produto?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        FirebaseFirestore.instance
+                                            .collection('Produtos')
+                                            .doc(document.id)
+                                            .delete();
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('confirmar'),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    );
+                  },
+                ).toList(),
+>>>>>>> Stashed changes
               );
             }));
   }

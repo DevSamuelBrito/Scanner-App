@@ -324,10 +324,14 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                           MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     child: Text(
-                      "Resumo",
+                      "cancelar",
                       style: TextStyle(color: Colors.white),
                     ),
+<<<<<<< Updated upstream
                     onPressed: () => Navigator.pushNamed(context, '/home'),
+=======
+                    onPressed: () => Navigator.of(context).pop(),
+>>>>>>> Stashed changes
                   ),
                 ),
               ],

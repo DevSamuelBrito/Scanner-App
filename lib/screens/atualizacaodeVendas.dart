@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+<<<<<<< Updated upstream
 import 'package:scanner_app/styles/styles.dart';
+=======
+>>>>>>> Stashed changes
 
 class Product {
   String? idPronto;
@@ -95,9 +98,13 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+<<<<<<< Updated upstream
         backgroundColor: Color.fromARGB(255, 218, 169, 8),
         title: Text("Editar Vendas"),
         centerTitle: true,
+=======
+        title: Text("Cadastro Vendas"),
+>>>>>>> Stashed changes
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
@@ -106,20 +113,30 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
             TextField(
               controller: nomeCliente,
               decoration: InputDecoration(
+<<<<<<< Updated upstream
                 label: Text('Nome do Cliente'),
+=======
+>>>>>>> Stashed changes
                 hintText: nomeCliente!.text.isNotEmpty
                     ? nomeCliente?.text
                     : 'Nome do Cliente',
                 border: OutlineInputBorder(),
               ),
             ),
+<<<<<<< Updated upstream
             SizedBox(height: 24),
             Expanded(
+=======
+            SizedBox(height: 16.0),
+            Expanded(
+              // Envolve a seção de produtos em um Expanded para ocupar todo o espaço disponível
+>>>>>>> Stashed changes
               child: ListView.builder(
                 itemCount: produtos.length,
                 itemBuilder: (context, index) {
                   Map<String, dynamic> produto = produtos[index];
                   return Column(
+<<<<<<< Updated upstream
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -215,6 +232,63 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
                   ),
                 ),
               ],
+=======
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('ID do Produto:'),
+                        TextField(
+                          controller:
+                              TextEditingController(text: produto['idProduto']),
+                          onChanged: (value) {
+                            produtos[index]['idProduto'] = value;
+                          },
+                        ),
+                        SizedBox(height: 10.0),
+                        Text('Nome do Produto:'),
+                        TextField(
+                          controller:
+                              TextEditingController(text: produto['nomeProd']),
+                          onChanged: (value) {
+                            produtos[index]['nomeProd'] = value;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        Text('Quantidade:'),
+                        TextField(
+                          controller:
+                              TextEditingController(text: produto['qtd']),
+                          onChanged: (value) {
+                            produtos[index]['qtd'] = value;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                      ]);
+                },
+              ),
+            ),
+            if (produtos.isNotEmpty)
+              ElevatedButton(
+                onPressed: removerUltimosProdutos,
+                child: Text('Remover Últimos 3 Produtos'),
+              ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  produtos.add({
+                    'idProduto': '',
+                    'nomeProd': '',
+                    'qtd': '',
+                  });
+                });
+              },
+              child: Text('Adicionar mais um Produto'),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () => _AtualizarProdutosVendas(),
+              child: Text('Cadastrar Venda'),
+>>>>>>> Stashed changes
             ),
           ],
         ),

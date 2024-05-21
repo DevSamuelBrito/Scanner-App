@@ -16,8 +16,13 @@ import 'package:uuid/uuid.dart';
 
 // Update page
 class UpdateProdutosPage extends StatefulWidget {
+<<<<<<< Updated upstream
   final String docId;
   UpdateProdutosPage({required this.docId});
+=======
+  final DocumentSnapshot document;
+  UpdateProdutosPage(this.document);
+>>>>>>> Stashed changes
 
   @override
   State<UpdateProdutosPage> createState() => _UpdateProdutosPageState();
@@ -45,7 +50,11 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
   load() async {
     var doc = await FirebaseFirestore.instance
         .collection('Produtos')
+<<<<<<< Updated upstream
         .doc(widget.docId)
+=======
+        .doc(widget.document.id)
+>>>>>>> Stashed changes
         .get();
     var docStorage = await FirebaseStorage.instance.ref('/images');
 
@@ -114,7 +123,11 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
       String productId = uuid.v4();
       FirebaseFirestore.instance
           .collection('Produtos')
+<<<<<<< Updated upstream
           .doc(widget.docId)
+=======
+          .doc(widget.document.id)
+>>>>>>> Stashed changes
           .update(
         {
           'descricao': txtDescricao.text,
@@ -193,7 +206,10 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Câmera',
+<<<<<<< Updated upstream
                   
+=======
+>>>>>>> Stashed changes
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -212,7 +228,10 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Remover',
+<<<<<<< Updated upstream
                   
+=======
+>>>>>>> Stashed changes
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -231,11 +250,18 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< Updated upstream
       appBar: AppBar(title: Text("Atualizar Produtos"), centerTitle: true),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 10, vertical: 60),
+=======
+      body: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 50),
+>>>>>>> Stashed changes
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -278,8 +304,13 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextField(
                   controller: txtDescricao,
                   decoration: InputDecoration(
+<<<<<<< Updated upstream
                     label:Text("Descrição"),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+=======
+                    border: OutlineInputBorder(),
+                    hintText: "Descrição",
+>>>>>>> Stashed changes
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -287,8 +318,13 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextFormField(
                   controller: txtPrecoVenda,
                   decoration: InputDecoration(
+<<<<<<< Updated upstream
                     label:Text("Preço de Venda"),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+=======
+                    border: OutlineInputBorder(),
+                    hintText: "Preço de Venda",
+>>>>>>> Stashed changes
                     prefixText: "R\$",
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -297,6 +333,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextField(
                   controller: txtReferencia,
                   decoration: InputDecoration(
+<<<<<<< Updated upstream
                     label:Text("Referência"),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   ),
@@ -313,12 +350,31 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                     child: Text(
                       "Atualizar",
                       style: TextStyle(fontSize: 16, color: Colors.white),
+=======
+                    border: OutlineInputBorder(),
+                    hintText: "Referência",
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+                SizedBox(height: 15),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
+                    ),
+                    child: Text(
+                      "Atualizar",
+                      style: TextStyle(color: Colors.white),
+>>>>>>> Stashed changes
                     ),
                     onPressed: () => _UpdateProdutos(context),
                   ),
                 ),
                 SizedBox(height: 15),
                 Container(
+<<<<<<< Updated upstream
                   width: 150,
                   child: ElevatedButton(
                     style: ButtonStyle(
@@ -328,6 +384,17 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                     child: Text(
                       "Cancelar",
                       style: TextStyle(fontSize: 16, color: Colors.white),
+=======
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
+                    ),
+                    child: Text(
+                      "Cancelar",
+                      style: TextStyle(color: Colors.white),
+>>>>>>> Stashed changes
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
@@ -339,4 +406,8 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
       ),
     );
   }
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes
