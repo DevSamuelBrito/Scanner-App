@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scanner_app/screens/updateClientes.dart';
 
 class clientes extends StatelessWidget {
-  clientes({super.key});
+  clientes ({Key? key});
 
   final firestore = FirebaseFirestore.instance;
 
@@ -12,52 +12,78 @@ class clientes extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Clientes"),
+        centerTitle: true, // Centraliza o título
       ),
-      floatingActionButton: FloatingActionButton( 
-      child: Icon(Icons.add),
-      onPressed: () => Navigator.pushNamed(context, "/cadastroClientes"),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () => Navigator.pushNamed(context, "/cadastroClientes"),
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: firestore.collection('Clientes').snapshots(),
-        builder: (context, snapshot) {
-
-          if(!snapshot.hasData) {
-            return const CircularProgressIndicator();
+        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
           var docs = snapshot.data!.docs;
 
-          return ListView(
-            children: docs.map((doc) => Dismissible(
-                background: Container(color: Colors.red,),
-                onDismissed: (_) { 
-                  doc.reference.delete();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.red,
-                      content: Text('Cliente Excluído com sucesso'),
-                    )
-                  );
-                },
-                key: Key(doc.id),
-                child: ListTile
-                (
-                  title: Text(doc['name']),
-                  subtitle: Text(doc['price'].toStringAsFixed(1)),
-                  trailing: IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => updateClientes(docId: doc.id))
-                      );
-                    },
+          return ListView.separated( // Utiliza ListView.separated para adicionar espaçamento entre os cartões
+            itemCount: docs.length,
+            separatorBuilder: (context, index) => SizedBox(height: 10), // Adiciona espaçamento entre os cartões
+            itemBuilder: (context, index) {
+              var doc = docs[index];
+              return Card(
+                child: ListTile(
+                  title: Text(
+                    doc['name'],
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 4), // Adiciona espaçamento entre o nome e as outras informações
+                      Text('CNPJ: ${doc['cnpj']}'),
+                      Text('Preço: ${doc['price']}'),
+                      Text('Cidade: ${doc['cidade']}'),
+                      Text('Telefone: ${doc['telefone']}'),
+                    ],
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit, size: 28), // Define o tamanho do ícone como 24
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => updateClientes(docId: doc.id),
+                            ),
+                          );
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, size: 28), // Define o tamanho do ícone como 24
+                        onPressed: () {
+                          doc.reference.delete();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              backgroundColor: Colors.red,
+                              content: Text('Cliente excluído com sucesso.'),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
-              ),).toList(),
+              );
+            },
           );
-
-        }
-      )
+        },
+      ),
     );
   }
 }
