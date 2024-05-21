@@ -231,10 +231,11 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("Atualizar Produtos"), centerTitle: true),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 50),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 60),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -277,8 +278,8 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextField(
                   controller: txtDescricao,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Descrição",
+                    label:Text("Descrição"),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -286,8 +287,8 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextFormField(
                   controller: txtPrecoVenda,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Preço de Venda",
+                    label:Text("Preço de Venda"),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                     prefixText: "R\$",
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -296,37 +297,37 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextField(
                   controller: txtReferencia,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Referência",
+                    label:Text("Referência"),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 25),
                 Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: 150,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.blue),
+                          MaterialStateProperty.all<Color>(Colors.green),
                     ),
                     child: Text(
                       "Atualizar",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                     onPressed: () => _UpdateProdutos(context),
                   ),
                 ),
                 SizedBox(height: 15),
                 Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: 150,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.blue),
+                          MaterialStateProperty.all<Color>(Colors.red),
                     ),
                     child: Text(
                       "Cancelar",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
