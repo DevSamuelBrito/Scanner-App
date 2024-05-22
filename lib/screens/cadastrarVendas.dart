@@ -62,10 +62,7 @@ class _CadastroVendasState extends State<CadastroVendas> {
           'qtd': produto.qtd,
         };
       }).toList(),
-<<<<<<< Updated upstream
-=======
       'createdAt': Timestamp.now(),
->>>>>>> Stashed changes
     });
 
     nomeCliente.clear();
@@ -105,21 +102,11 @@ class _CadastroVendasState extends State<CadastroVendas> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-<<<<<<< Updated upstream
-            TextFormField(
-              controller: nomeCliente,
-              decoration: InputDecoration(
-                label: Text('Insira o nome do cliente'),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-=======
             TextField(
               controller: nomeCliente,
               decoration: InputDecoration(
                 hintText: 'Insira o nome do cliente',
                 border: OutlineInputBorder(),
->>>>>>> Stashed changes
               ),
             ),
             SizedBox(height: 16.0),
@@ -135,7 +122,6 @@ class _CadastroVendasState extends State<CadastroVendas> {
                           style: StylesProntos.textBotao(
                               context, '18', Colors.black),
                         ),
-<<<<<<< Updated upstream
                         SizedBox(height: 10.0),
                         TextFormField(
                           decoration: InputDecoration(
@@ -143,51 +129,30 @@ class _CadastroVendasState extends State<CadastroVendas> {
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-=======
-                        //aqui ficariam os index dos produtos
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Insira o id produto',
-                            border: OutlineInputBorder(),
->>>>>>> Stashed changes
                           ),
                           onChanged: (value) {
                             produto.idPronto = value;
                           },
                         ),
                         SizedBox(height: 10),
-<<<<<<< Updated upstream
                         TextFormField(
                           decoration: InputDecoration(
                             label: Text('Insira o Nome do produto'),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-=======
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Insira o nome do produto',
-                            border: OutlineInputBorder(),
->>>>>>> Stashed changes
                           ),
                           onChanged: (value) {
                             produto.nomeProd = value;
                           },
                         ),
                         SizedBox(height: 10),
-<<<<<<< Updated upstream
                         TextFormField(
                           decoration: InputDecoration(
                             label: Text('Insira a Quantidade'),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
-=======
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Quantidade',
-                            border: OutlineInputBorder(),
->>>>>>> Stashed changes
                           ),
                           onChanged: (value) {
                             produto.qtd = value;
@@ -215,17 +180,11 @@ class _CadastroVendasState extends State<CadastroVendas> {
                 TextButton(
                   style: StylesProntos.pequenoBotaoVerde(context),
                   onPressed: () {
-<<<<<<< Updated upstream
                     setState(
                       () {
                         produtos.add(Product());
                       },
                     );
-=======
-                    setState(() {
-                      produtos.add(Product());
-                    });
->>>>>>> Stashed changes
                   },
                   child: Text(
                     '+',

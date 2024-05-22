@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-<<<<<<< Updated upstream
-
-class TelaResumo extends StatelessWidget {
-  void returnHome(BuildContext context) {
-    Navigator.pushReplacementNamed(context, '/cadastroVendas');
-=======
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -77,31 +71,16 @@ class TelaResumo extends StatelessWidget {
         onLayout: (PdfPageFormat format) async => doc.save(),
       );
     }
->>>>>>> Stashed changes
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-<<<<<<< Updated upstream
         title: Text("Tela de Resumos"),
         actions: [
           IconButton(
-            onPressed: () => returnHome(context),
-            icon: Icon(Icons.logout),
-          ),
-        ],
-      ),
-      body: Container(child:Text('teste')),
-    );
-  }
-}
-=======
-        title: Text("Tela de Resumo"),
-        actions: [
-          IconButton(
-            onPressed: _printScreen,
+            onPressed: () => _printScreen,
             icon: Icon(Icons.picture_as_pdf),
           ),
         ],
@@ -138,19 +117,21 @@ class TelaResumo extends StatelessWidget {
                   SizedBox(height: 30),
                   Text('Produtos:',
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  ...produtos.map((produtos) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Nome do Produto: ${produtos['nomeProd']}'),
-                        Text('ID do Produto: ${produtos['idProdtuo']}'),
-                        Text('Quantidade: ${produtos['qtd']}'),
-                        SizedBox(
-                          height: 8,
-                        )
-                      ],
-                    );
-                  })
+                  ...produtos.map(
+                    (produtos) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Nome do Produto: ${produtos['nomeProd']}'),
+                          Text('ID do Produto: ${produtos['idProduto']}'),
+                          Text('Quantidade: ${produtos['qtd']}'),
+                          SizedBox(
+                            height: 8,
+                          )
+                        ],
+                      );
+                    },
+                  )
 
                   // if (data.containsKey('Amount') && data['sAmount'] != null)
                   //   Text((data['Amount'] as num).toStringAsFixed(1)),
@@ -266,4 +247,3 @@ class TelaResumo extends StatelessWidget {
 //     );
 //   }
 // }
->>>>>>> Stashed changes

@@ -327,11 +327,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                       "cancelar",
                       style: TextStyle(color: Colors.white),
                     ),
-<<<<<<< Updated upstream
-                    onPressed: () => Navigator.pushNamed(context, '/home'),
-=======
                     onPressed: () => Navigator.of(context).pop(),
->>>>>>> Stashed changes
                   ),
                 ),
               ],

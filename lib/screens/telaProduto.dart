@@ -17,10 +17,7 @@ class TelaProduto extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-<<<<<<< Updated upstream
-=======
           backgroundColor: Colors.blue,
->>>>>>> Stashed changes
           onPressed: () => Navigator.pushNamed(context, "/cadastroProdutos"),
         ),
         body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -33,39 +30,6 @@ class TelaProduto extends StatelessWidget {
               var docs = snapshot.data!.docs;
 
               return ListView(
-<<<<<<< Updated upstream
-                children: docs
-                    .map(
-                      (doc) => Dismissible(
-                        background: Container(
-                          color: Colors.amber,
-                        ),
-                        onDismissed: (_) {
-                          doc.reference.delete();
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            backgroundColor: Colors.black,
-                            content: Text("Produto deletado com sucesso!"),
-                          ));
-                        },
-                        key: Key(doc.id),
-                        child: ListTile(
-                          title: Text(doc['descricao']),
-                          subtitle: Text(doc['precoVenda']),
-                          trailing: IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          UpdateProdutosPage(docId: doc.id)));
-                            },
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-=======
                 children: snapshot.data!.docs.map(
                   (DocumentSnapshot document) {
                     Map<String, dynamic> data =
@@ -124,7 +88,6 @@ class TelaProduto extends StatelessWidget {
                     );
                   },
                 ).toList(),
->>>>>>> Stashed changes
               );
             }));
   }

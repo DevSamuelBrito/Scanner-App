@@ -6,10 +6,8 @@ import 'package:scanner_app/screens/vendasScreen.dart';
 import 'screens/atualizarProdutos.dart';
 import 'screens/telaProduto.dart';
 import 'screens/homepage.dart';
-import 'screens/cadastroProdutos.dart';
 import 'screens/leituraCodigoBarras.dart';
 import 'screens/cadastrarVendas.dart';
-import 'screens/tabelaProdutos.dart';
 import 'screens/cadastroClientes.dart';
 import 'screens/telaResumo.dart';
 
@@ -44,10 +42,6 @@ class ScannerApp extends StatelessWidget {
         //     UpdateProdutosPage(), //rota para a tela de atualizar o produto
       },
       initialRoute: '/home',
-<<<<<<< Updated upstream
-    );  
-=======
     );
->>>>>>> Stashed changes
   }
 }
