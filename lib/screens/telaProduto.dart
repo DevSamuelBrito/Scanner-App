@@ -17,6 +17,7 @@ class TelaProduto extends StatelessWidget {
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
+          backgroundColor: Colors.blue,
           onPressed: () => Navigator.pushNamed(context, "/cadastroProdutos"),
         ),
         body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
@@ -29,37 +30,64 @@ class TelaProduto extends StatelessWidget {
               var docs = snapshot.data!.docs;
 
               return ListView(
-                children: docs
-                    .map(
-                      (doc) => Dismissible(
-                        background: Container(
-                          color: Colors.amber,
-                        ),
-                        onDismissed: (_) {
-                          doc.reference.delete();
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            backgroundColor: Colors.black,
-                            content: Text("Produto deletado com sucesso!"),
-                          ));
-                        },
-                        key: Key(doc.id),
-                        child: ListTile(
-                          title: Text(doc['descricao']),
-                          subtitle: Text(doc['precoVenda']),
-                          trailing: IconButton(
+                children: snapshot.data!.docs.map(
+                  (DocumentSnapshot document) {
+                    Map<String, dynamic> data =
+                        document.data() as Map<String, dynamic>;
+                    return ListTile(
+                      title: Text(data['descricao']),
+                      subtitle: Text(data['precoVenda']),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
                             icon: Icon(Icons.edit),
                             onPressed: () {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          UpdateProdutosPage(docId: doc.id)));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      UpdateProdutosPage(document),
+                                ),
+                              );
                             },
                           ),
-                        ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: Text('Confirmar exclusão'),
+                                  content: Text(
+                                      'Tem certeza que deseja excluir este produto?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Cancelar'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        FirebaseFirestore.instance
+                                            .collection('Produtos')
+                                            .doc(document.id)
+                                            .delete();
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('confirmar'),
+                                    )
+                                  ],
+                                ),
+                              );
+                            },
+                          )
+                        ],
                       ),
-                    )
-                    .toList(),
+                    );
+                  },
+                ).toList(),
               );
             }));
   }

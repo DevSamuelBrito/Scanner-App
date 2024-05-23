@@ -8,7 +8,6 @@ import 'screens/telaProduto.dart';
 import 'screens/homepage.dart';
 import 'screens/leituraCodigoBarras.dart';
 import 'screens/cadastrarVendas.dart';
-import 'screens/tabelaProdutos.dart';
 import 'screens/cadastroClientes.dart';
 import 'screens/telaResumo.dart';
 
@@ -43,6 +42,6 @@ class ScannerApp extends StatelessWidget {
         //     UpdateProdutosPage(), //rota para a tela de atualizar o produto
       },
       initialRoute: '/home',
-    );  
+    );
   }
 }

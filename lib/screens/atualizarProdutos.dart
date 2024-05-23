@@ -16,8 +16,8 @@ import 'package:uuid/uuid.dart';
 
 // Update page
 class UpdateProdutosPage extends StatefulWidget {
-  final String docId;
-  UpdateProdutosPage({required this.docId});
+  final DocumentSnapshot document;
+  UpdateProdutosPage(this.document);
 
   @override
   State<UpdateProdutosPage> createState() => _UpdateProdutosPageState();
@@ -45,7 +45,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
   load() async {
     var doc = await FirebaseFirestore.instance
         .collection('Produtos')
-        .doc(widget.docId)
+        .doc(widget.document.id)
         .get();
     var docStorage = await FirebaseStorage.instance.ref('/images');
 
@@ -114,7 +114,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
       String productId = uuid.v4();
       FirebaseFirestore.instance
           .collection('Produtos')
-          .doc(widget.docId)
+          .doc(widget.document.id)
           .update(
         {
           'descricao': txtDescricao.text,
@@ -193,7 +193,6 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Câmera',
-                  
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -212,7 +211,6 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Remover',
-                  
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -287,8 +285,8 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextFormField(
                   controller: txtPrecoVenda,
                   decoration: InputDecoration(
-                    label:Text("Preço de Venda"),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(),
+                    hintText: "Preço de Venda",
                     prefixText: "R\$",
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -297,22 +295,22 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextField(
                   controller: txtReferencia,
                   decoration: InputDecoration(
-                    label:Text("Referência"),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(),
+                    hintText: "Referência",
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 15),
                 Container(
-                  width: 150,
+                  width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.green),
+                          MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     child: Text(
                       "Atualizar",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () => _UpdateProdutos(context),
                   ),

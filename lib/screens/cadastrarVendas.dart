@@ -62,6 +62,7 @@ class _CadastroVendasState extends State<CadastroVendas> {
           'qtd': produto.qtd,
         };
       }).toList(),
+      'createdAt': Timestamp.now(),
     });
 
     nomeCliente.clear();
@@ -101,13 +102,11 @@ class _CadastroVendasState extends State<CadastroVendas> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextFormField(
+            TextField(
               controller: nomeCliente,
               decoration: InputDecoration(
-                label: Text('Insira o nome do cliente'),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                hintText: 'Insira o nome do cliente',
+                border: OutlineInputBorder(),
               ),
             ),
             SizedBox(height: 16.0),
