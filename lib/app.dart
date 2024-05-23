@@ -6,7 +6,6 @@ import 'package:scanner_app/screens/vendasScreen.dart';
 import 'screens/atualizarProdutos.dart';
 import 'screens/telaProduto.dart';
 import 'screens/homepage.dart';
-import 'screens/cadastroProdutos.dart';
 import 'screens/leituraCodigoBarras.dart';
 import 'screens/cadastrarVendas.dart';
 import 'screens/tabelaProdutos.dart';
@@ -24,7 +23,7 @@ class ScannerApp extends StatelessWidget {
       title: "Scanner App", //Titulo do App(Edge)
       routes: {
         "/home": (context) => HomePage(), // rota para a tela home
-        "/cadastroProdutos": (context) =>
+        "/cadastroProdutos": (context) => 
             CadastrarProdutosPage(), // rota para a tela cadastro produtos
         "/leituraCodigoBarras": (context) =>
             leituraCodigoBarras(), // rota para a tela leitura codigo de barras
