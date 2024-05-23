@@ -56,7 +56,7 @@ class TelaResumo extends StatelessWidget {
                       children: [
                         pw.Text('Nome do Produto: ${produto['nomeProd']}',style:pw.TextStyle(fontSize: 20)),
                         pw.Text('ID do Produto: ${produto['idProduto']}',style:pw.TextStyle(fontSize: 20)),
-                        pw.Text('Quantidade: ${produto['qtd']}',style:pw.TextStyle(fontSize: 20))q,
+                        pw.Text('Quantidade: ${produto['qtd']}',style:pw.TextStyle(fontSize: 20)),
                         pw.SizedBox(height: 10),
                       ],
                     );
