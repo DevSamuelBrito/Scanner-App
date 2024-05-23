@@ -37,23 +37,26 @@ class TelaResumo extends StatelessWidget {
           build: (pw.Context context) {
             return pw.Center(
               child: pw.Column(
-                mainAxisAlignment: pw.MainAxisAlignment.center,
+                // mainAxisAlignment: pw.MainAxisAlignment.center,
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Text('Nome do Cliente: ${data['nomeCliente']}'),
+                  pw.Text('Resumo da Venda', style: pw.TextStyle(fontSize: 35)),
+                  pw.Text('Nome do Cliente: ${data['nomeCliente']}',style:pw.TextStyle(fontSize: 25)),
                   pw.SizedBox(height: 10),
-                  pw.Text('Data: ${data['Data'] ?? "Data não disponível"}'),
-                  pw.Text('Time: ${data['Time'] ?? "Tempo não disponível"}'),
+                  pw.Text('Data: ${data['Data'] ?? "Data não disponível"}',
+                      style: pw.TextStyle(fontSize: 25)),
+                  pw.Text('Hora: ${data['Time'] ?? "Tempo não disponível"}',
+                      style: pw.TextStyle(fontSize: 25)),
                   pw.SizedBox(height: 20),
                   pw.Text('Produtos:',
-                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      style: pw.TextStyle(fontSize: 25,fontWeight: pw.FontWeight.bold)),
                   ...produtos.map((produto) {
                     return pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        pw.Text('Nome do Produto: ${produto['nomeProd']}'),
-                        pw.Text('ID do Produto: ${produto['idProduto']}'),
-                        pw.Text('Quantidade: ${produto['qtd']}'),
+                        pw.Text('Nome do Produto: ${produto['nomeProd']}',style:pw.TextStyle(fontSize: 20)),
+                        pw.Text('ID do Produto: ${produto['idProduto']}',style:pw.TextStyle(fontSize: 20)),
+                        pw.Text('Quantidade: ${produto['qtd']}',style:pw.TextStyle(fontSize: 20))q,
                         pw.SizedBox(height: 10),
                       ],
                     );
@@ -80,7 +83,7 @@ class TelaResumo extends StatelessWidget {
         title: Text("Tela de Resumos"),
         actions: [
           IconButton(
-            onPressed: () => _printScreen,
+            onPressed: () => _printScreen(),
             icon: Icon(Icons.picture_as_pdf),
           ),
         ],
