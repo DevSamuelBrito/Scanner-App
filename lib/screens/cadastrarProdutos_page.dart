@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:scanner_app/styles/styles.dart';
 import 'package:uuid/uuid.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'dart:io';
@@ -224,10 +225,11 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text("Cadastro de Produtos"), centerTitle: true),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 50),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 60),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -265,13 +267,14 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   ],
                 ),
                 SizedBox(
-                  height: 15,
+                  height: 50,
                 ),
                 TextField(
                   controller: txtDescricao,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Descrição",
+                    label: Text("Descrição"),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -279,8 +282,9 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                 TextField(
                   controller: txtPrecoVenda,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Preço de Venda",
+                    label: Text("Preço de Venda"),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
                     prefixText: "R\$",
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -289,45 +293,35 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                 TextField(
                   controller: txtReferencia,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Referência",
+                    label: Text("Referência"),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 50),
                 ElevatedButton(
+                  style: StylesProntos.pequenoBotaoBlue(context),
                   onPressed: _generatedRandomNumber,
-                  child: Text(randomNumbers.isEmpty
-                      ? 'Gerar Novo Código de barras'
-                      : 'Código de Barras: $randomNumbers'),
+                  child: Text(
+                    randomNumbers.isEmpty
+                        ? 'Gerar Novo Código de barras'
+                        : 'Código de Barras: $randomNumbers',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-                SizedBox(height: 15),
+                SizedBox(height: 25),
                 Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: 150,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.blue),
+                          MaterialStateProperty.all<Color>(Colors.green),
                     ),
                     child: Text(
                       "Cadastrar",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                     onPressed: () => _Cadastrar(context),
-                  ),
-                ),
-                SizedBox(height: 15),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.blue),
-                    ),
-                    child: Text(
-                      "cancelar",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
               ],

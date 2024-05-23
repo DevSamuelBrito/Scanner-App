@@ -276,8 +276,9 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextField(
                   controller: txtDescricao,
                   decoration: InputDecoration(
-                    label:Text("Descrição"),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    label: Text("Descrição"),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -285,8 +286,9 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextFormField(
                   controller: txtPrecoVenda,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Preço de Venda",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    label: Text("Preço de Venda"),
                     prefixText: "R\$",
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -295,8 +297,9 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextField(
                   controller: txtReferencia,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: "Referência",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    label: Text("Referência"),
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
