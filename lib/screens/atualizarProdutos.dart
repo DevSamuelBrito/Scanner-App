@@ -229,7 +229,13 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Atualizar Produtos"), centerTitle: true),
+      appBar: AppBar(
+          backgroundColor: Color.fromARGB(255, 218, 169, 8),
+          title: Text(
+            "Atualizar Produtos",
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true),
       body: SingleChildScrollView(
         child: Center(
           child: Container(

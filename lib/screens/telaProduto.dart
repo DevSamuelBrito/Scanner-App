@@ -13,7 +13,11 @@ class TelaProduto extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Tela de Produtos"),
+          backgroundColor: Color.fromARGB(255, 218, 169, 8),
+          title: Text(
+            "Tela de Produtos",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),

@@ -225,7 +225,14 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Cadastro de Produtos"), centerTitle: true),
+      appBar: AppBar(
+        title: Text(
+          "Cadastro de Produtos",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Container(

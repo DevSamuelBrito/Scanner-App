@@ -1,9 +1,8 @@
 import "package:flutter/material.dart";
-import 'package:cloud_firestore/cloud_firestore.dart';  
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
 
 class updateClientes extends StatefulWidget {
-
   final String docId;
 
   updateClientes({required this.docId});
@@ -20,12 +19,15 @@ class _updateClientesState extends State<updateClientes> {
   }
 
   load() async {
-    var doc = await FirebaseFirestore.instance.collection('Clientes').doc(widget.docId).get();
-    _txtName.text = doc.data() !['name'];
-    _txtPrice.text = doc.data() !['price'].toString();
-    _txtCnpj.text = doc.data() !['cnpj'];
-    _txtTelefone.text = doc.data() !['telefone'];
-    _txtCidade.text = doc.data() !['cidade'];
+    var doc = await FirebaseFirestore.instance
+        .collection('Clientes')
+        .doc(widget.docId)
+        .get();
+    _txtName.text = doc.data()!['name'];
+    _txtPrice.text = doc.data()!['price'].toString();
+    _txtCnpj.text = doc.data()!['cnpj'];
+    _txtTelefone.text = doc.data()!['telefone'];
+    _txtCidade.text = doc.data()!['cidade'];
   }
 
   final _txtName = TextEditingController();
@@ -35,7 +37,6 @@ class _updateClientesState extends State<updateClientes> {
   final _txtCidade = TextEditingController();
 
   void _onSaved(BuildContext context) {
-
     final nameText = _txtName.text.trim();
     if (nameText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -52,7 +53,8 @@ class _updateClientesState extends State<updateClientes> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Por favor, insira um valor para o multiplicador de preço.'),
+          content:
+              Text('Por favor, insira um valor para o multiplicador de preço.'),
         ),
       );
       return;
@@ -62,7 +64,8 @@ class _updateClientesState extends State<updateClientes> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          content: Text('O valor do multiplicador de preço deve ser um número válido. (Separador de decimais é um ponto ".")'),
+          content: Text(
+              'O valor do multiplicador de preço deve ser um número válido. (Separador de decimais é um ponto ".")'),
         ),
       );
       return;
@@ -70,36 +73,27 @@ class _updateClientesState extends State<updateClientes> {
 
     final cnpjText = _txtCnpj.text.trim();
     if (cnpjText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Por favor, insira um CNPJ válido.')
-        )
-      );
+          content: Text('Por favor, insira um CNPJ válido.')));
       return;
-    }    
+    }
 
     final cidadeText = _txtCidade.text.trim();
     if (cidadeText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Por favor, insira uma Cidade')
-        )
-      );
+          content: Text('Por favor, insira uma Cidade')));
       return;
     }
 
     final telefoneText = _txtTelefone.text.trim();
     if (telefoneText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Por favor, insira uma Número da casa')
-        )
-      );
+          content: Text('Por favor, insira uma Número da casa')));
       return;
-    }            
+    }
 
     FirebaseFirestore.instance.collection('Clientes').doc(widget.docId).update({
       'name': _txtName.text,
@@ -107,7 +101,6 @@ class _updateClientesState extends State<updateClientes> {
       'cnpj': _txtCnpj.text,
       'telefone': _txtTelefone.text,
       'cidade': _txtCidade.text,
-
     }).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -117,7 +110,6 @@ class _updateClientesState extends State<updateClientes> {
       );
 
       Navigator.pushReplacementNamed(context, "/clientes");
-
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -132,13 +124,16 @@ class _updateClientesState extends State<updateClientes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Atualização de Clientes"),
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        title: Text(
+          "Atualização de Clientes",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Container(
         margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
         child: Column(
           children: [
-
             TextField(
               controller: _txtName,
               decoration: InputDecoration(
@@ -156,12 +151,9 @@ class _updateClientesState extends State<updateClientes> {
             ),
 
             TextField(
-              controller: _txtCnpj,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: "CNPJ do Cliente"
-              )
-            ),
+                controller: _txtCnpj,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(), hintText: "CNPJ do Cliente")),
 
             TextField(
               controller: _txtCidade,
@@ -177,11 +169,11 @@ class _updateClientesState extends State<updateClientes> {
                 border: OutlineInputBorder(),
                 hintText: "Telefone do Cliente",
               ),
-            ),            
+            ),
 
             // Row(
             //   children: [
-                
+
             //     Flexible(
             //       flex: 2,
             //       child: TextField(

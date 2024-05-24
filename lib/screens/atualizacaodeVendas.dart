@@ -96,7 +96,10 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 218, 169, 8),
-        title: Text("Editar Vendas"),
+        title: Text(
+          "Editar Vendas",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true,
       ),
       body: Container(

@@ -41,7 +41,8 @@ class TelaResumo extends StatelessWidget {
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Text('Resumo da Venda', style: pw.TextStyle(fontSize: 35)),
-                  pw.Text('Nome do Cliente: ${data['nomeCliente']}',style:pw.TextStyle(fontSize: 25)),
+                  pw.Text('Nome do Cliente: ${data['nomeCliente']}',
+                      style: pw.TextStyle(fontSize: 25)),
                   pw.SizedBox(height: 10),
                   pw.Text('Data: ${data['Data'] ?? "Data não disponível"}',
                       style: pw.TextStyle(fontSize: 25)),
@@ -49,14 +50,18 @@ class TelaResumo extends StatelessWidget {
                       style: pw.TextStyle(fontSize: 25)),
                   pw.SizedBox(height: 20),
                   pw.Text('Produtos:',
-                      style: pw.TextStyle(fontSize: 25,fontWeight: pw.FontWeight.bold)),
+                      style: pw.TextStyle(
+                          fontSize: 25, fontWeight: pw.FontWeight.bold)),
                   ...produtos.map((produto) {
                     return pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
-                        pw.Text('Nome do Produto: ${produto['nomeProd']}',style:pw.TextStyle(fontSize: 20)),
-                        pw.Text('ID do Produto: ${produto['idProduto']}',style:pw.TextStyle(fontSize: 20)),
-                        pw.Text('Quantidade: ${produto['qtd']}',style:pw.TextStyle(fontSize: 20)),
+                        pw.Text('Nome do Produto: ${produto['nomeProd']}',
+                            style: pw.TextStyle(fontSize: 20)),
+                        pw.Text('ID do Produto: ${produto['idProduto']}',
+                            style: pw.TextStyle(fontSize: 20)),
+                        pw.Text('Quantidade: ${produto['qtd']}',
+                            style: pw.TextStyle(fontSize: 20)),
                         pw.SizedBox(height: 10),
                       ],
                     );
@@ -80,7 +85,8 @@ class TelaResumo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Tela de Resumos"),
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        title: Text("Tela de Resumo", style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
             onPressed: () => _printScreen(),

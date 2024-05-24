@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scanner_app/screens/updateClientes.dart';
 
 class clientes extends StatelessWidget {
-  clientes ({Key? key});
+  clientes({Key? key});
 
   final firestore = FirebaseFirestore.instance;
 
@@ -11,7 +11,8 @@ class clientes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Clientes"),
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        title: Text("Clientes", style: TextStyle(color: Colors.white),),
         centerTitle: true, // Centraliza o título
       ),
       floatingActionButton: FloatingActionButton(
@@ -20,7 +21,8 @@ class clientes extends StatelessWidget {
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: firestore.collection('Clientes').snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        builder: (context,
+            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
           if (!snapshot.hasData) {
             return Center(
               child: CircularProgressIndicator(),
@@ -29,9 +31,11 @@ class clientes extends StatelessWidget {
 
           var docs = snapshot.data!.docs;
 
-          return ListView.separated( // Utiliza ListView.separated para adicionar espaçamento entre os cartões
+          return ListView.separated(
+            // Utiliza ListView.separated para adicionar espaçamento entre os cartões
             itemCount: docs.length,
-            separatorBuilder: (context, index) => SizedBox(height: 10), // Adiciona espaçamento entre os cartões
+            separatorBuilder: (context, index) =>
+                SizedBox(height: 10), // Adiciona espaçamento entre os cartões
             itemBuilder: (context, index) {
               var doc = docs[index];
               return Card(
@@ -43,7 +47,9 @@ class clientes extends StatelessWidget {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 4), // Adiciona espaçamento entre o nome e as outras informações
+                      SizedBox(
+                          height:
+                              4), // Adiciona espaçamento entre o nome e as outras informações
                       Text('CNPJ: ${doc['cnpj']}'),
                       Text('Preço: ${doc['price']}'),
                       Text('Cidade: ${doc['cidade']}'),
@@ -54,18 +60,21 @@ class clientes extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.edit, size: 28), // Define o tamanho do ícone como 24
+                        icon: Icon(Icons.edit,
+                            size: 28), // Define o tamanho do ícone como 24
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => updateClientes(docId: doc.id),
+                              builder: (context) =>
+                                  updateClientes(docId: doc.id),
                             ),
                           );
                         },
                       ),
                       IconButton(
-                        icon: Icon(Icons.delete, size: 28), // Define o tamanho do ícone como 24
+                        icon: Icon(Icons.delete,
+                            size: 28), // Define o tamanho do ícone como 24
                         onPressed: () {
                           doc.reference.delete();
                           ScaffoldMessenger.of(context).showSnackBar(

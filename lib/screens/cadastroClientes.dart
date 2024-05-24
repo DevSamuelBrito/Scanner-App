@@ -12,15 +12,12 @@ class cadastroClientes extends StatelessWidget {
   final _txtTelefone = MaskedTextController(mask: '(00)00000-0000');
 
   void _onSaved(BuildContext context) {
-
     final nameText = _txtName.text.trim();
     if (nameText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text('Insira um nome para o Cliente.'),
-        )
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.red,
+        content: Text('Insira um nome para o Cliente.'),
+      ));
       return;
     }
 
@@ -29,7 +26,8 @@ class cadastroClientes extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Por favor, insira um valor para o multiplicador de preço.'),
+          content:
+              Text('Por favor, insira um valor para o multiplicador de preço.'),
         ),
       );
       return;
@@ -39,7 +37,8 @@ class cadastroClientes extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red,
-          content: Text('O valor do multiplicador de preço deve ser um número válido. (Separador de decimais é um ponto ".")'),
+          content: Text(
+              'O valor do multiplicador de preço deve ser um número válido. (Separador de decimais é um ponto ".")'),
         ),
       );
       return;
@@ -47,36 +46,27 @@ class cadastroClientes extends StatelessWidget {
 
     final cnpjText = _txtCnpj.text.trim();
     if (cnpjText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Por favor, insira um CNPJ válido.')
-        )
-      );
+          content: Text('Por favor, insira um CNPJ válido.')));
       return;
     }
 
     final cidadeText = _txtCidade.text.trim();
     if (cidadeText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Por favor, insira uma Cidade')
-        )
-      );
+          content: Text('Por favor, insira uma Cidade')));
       return;
     }
 
     final telefoneText = _txtTelefone.text.trim();
     if (telefoneText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Por favor, insira uma Número da casa')
-        )
-      );
+          content: Text('Por favor, insira uma Número da casa')));
       return;
-    }     
+    }
 
     FirebaseFirestore.instance.collection('Clientes').add({
       'name': _txtName.text,
@@ -100,14 +90,17 @@ class cadastroClientes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro de Clientes"),
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        title: Text(
+          "Cadastro de Clientes",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Container(
         margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-          
               TextField(
                 controller: _txtName,
                 decoration: InputDecoration(
@@ -115,7 +108,7 @@ class cadastroClientes extends StatelessWidget {
                   hintText: "Nome do Cliente",
                 ),
               ),
-          
+
               TextField(
                 controller: _txtPrice,
                 decoration: InputDecoration(
@@ -123,7 +116,7 @@ class cadastroClientes extends StatelessWidget {
                   hintText: "Multiplicador de preço do Cliente",
                 ),
               ),
-          
+
               TextField(
                 controller: _txtCnpj,
                 decoration: InputDecoration(
@@ -131,14 +124,14 @@ class cadastroClientes extends StatelessWidget {
                   hintText: "CNPJ do Cliente",
                 ),
               ),
-          
+
               TextField(
                 controller: _txtCidade,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "Cidade do Cliente",
                 ),
-              ),     
+              ),
 
               TextField(
                 controller: _txtTelefone,
@@ -146,11 +139,11 @@ class cadastroClientes extends StatelessWidget {
                   border: OutlineInputBorder(),
                   hintText: "Telefone do Cliente",
                 ),
-              ),    
-          
+              ),
+
               // Row(
               //   children: [
-              
+
               //     Flexible(
               //       flex: 2,
               //       child: TextField(
@@ -161,7 +154,7 @@ class cadastroClientes extends StatelessWidget {
               //         ),
               //       ),
               //     ),
-              
+
               //     Flexible(
               //       flex: 1,
               //       child: TextField(
@@ -174,7 +167,7 @@ class cadastroClientes extends StatelessWidget {
               //     ),
               //   ],
               // ),
-          
+
               Container(
                 margin: EdgeInsets.only(top: 10),
                 width: double.infinity,
@@ -183,7 +176,6 @@ class cadastroClientes extends StatelessWidget {
                   onPressed: () => _onSaved(context),
                 ),
               ),
-          
             ],
           ),
         ),
