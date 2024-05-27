@@ -12,7 +12,7 @@ class Product {
 
 class AtualizacaodeVendas extends StatefulWidget {
   final DocumentSnapshot document;
-  AtualizacaodeVendas(this.document);
+  AtualizacaodeVendas(this.document);//jsdjj
 
   @override
   _AtualizacaodeVendasState createState() => _AtualizacaodeVendasState();
