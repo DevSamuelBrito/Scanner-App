@@ -311,7 +311,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 SizedBox(height: 15),
                 Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: 150,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
@@ -319,7 +319,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                     ),
                     child: Text(
                       "Atualizar",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                     onPressed: () => _UpdateProdutos(context),
                   ),
