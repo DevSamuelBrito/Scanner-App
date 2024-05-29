@@ -18,6 +18,7 @@ class clientes extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => Navigator.pushNamed(context, "/cadastroClientes"),
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: firestore.collection('Clientes').snapshots(),

@@ -3,6 +3,7 @@ import "package:flutter/material.dart";
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:extended_masked_text/extended_masked_text.dart';
+import 'package:scanner_app/styles/styles.dart';
 
 class cadastroClientes extends StatelessWidget {
   final _txtName = TextEditingController();
@@ -16,7 +17,7 @@ class cadastroClientes extends StatelessWidget {
     if (nameText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.red,
-        content: Text('Insira um nome para o Cliente.'),
+        content: Text('Insira um nome para o Cliente'),
       ));
       return;
     }
@@ -27,7 +28,7 @@ class cadastroClientes extends StatelessWidget {
         SnackBar(
           backgroundColor: Colors.red,
           content:
-              Text('Por favor, insira um valor para o multiplicador de preço.'),
+              Text('Por favor, insira um valor para o multiplicador de preço'),
         ),
       );
       return;
@@ -48,7 +49,7 @@ class cadastroClientes extends StatelessWidget {
     if (cnpjText.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.red,
-          content: Text('Por favor, insira um CNPJ válido.')));
+          content: Text('Por favor, insira um CNPJ válido')));
       return;
     }
 
@@ -95,6 +96,7 @@ class cadastroClientes extends StatelessWidget {
           "Cadastro de Clientes",
           style: TextStyle(color: Colors.white),
         ),
+        centerTitle: true,
       ),
       body: Container(
         margin: EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -104,42 +106,45 @@ class cadastroClientes extends StatelessWidget {
               TextField(
                 controller: _txtName,
                 decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Nome do Cliente",
-                ),
+                    border: OutlineInputBorder(),
+                    label: Text("Nome do Cliente")),
               ),
+              SizedBox(height: 10),
 
               TextField(
                 controller: _txtPrice,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: "Multiplicador de preço do Cliente",
+                  label: Text("Multiplicador de preço do Cliente"),
                 ),
               ),
-
+              SizedBox(height: 10),
               TextField(
                 controller: _txtCnpj,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: "CNPJ do Cliente",
+                  label: Text("CNPJ do Cliente"),
                 ),
               ),
+              SizedBox(height: 10),
 
               TextField(
                 controller: _txtCidade,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: "Cidade do Cliente",
+                  label: Text("Cidade do Cliente"),
                 ),
               ),
+              SizedBox(height: 10),
 
               TextField(
                 controller: _txtTelefone,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
-                  hintText: "Telefone do Cliente",
+                  label: Text("Telefone do Cliente"),
                 ),
               ),
+              SizedBox(height: 10),
 
               // Row(
               //   children: [
@@ -170,9 +175,13 @@ class cadastroClientes extends StatelessWidget {
 
               Container(
                 margin: EdgeInsets.only(top: 10),
-                width: double.infinity,
-                child: ElevatedButton(
-                  child: Text("Salvar"),
+                width: 150,
+                child: TextButton(
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.green),
+                  ),
+                  child: Text("Salvar", style: StylesProntos.textBotao(context, '14', Colors.white),),
                   onPressed: () => _onSaved(context),
                 ),
               ),
