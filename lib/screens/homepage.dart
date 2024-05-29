@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../styles/styles.dart';
+
 //comentario commit
 class HomePage extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,21 +32,30 @@ class HomePage extends StatelessWidget {
               children: [
                 TextButton(
                   style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, "/tabelaProdutos"),
+                  onPressed: () => Navigator.pushNamed(context, "/clientes"),
                   child: Text(
-                    'Tabela de Produtos',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
+                    'Clientes',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
                 TextButton(
                   style: StylesProntos.estiloBotaoPadrao(context),
                   onPressed: () =>
-                      Navigator.pushNamed(context, "/cadastroProdutos"),
+                      Navigator.pushNamed(context, "/tabelaProdutos"),
                   child: Text(
-                    'Registrar Produto',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
+                    'Produtos',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  ),
+                ),
+                SizedBox(height: 30),
+                TextButton(
+                  style: StylesProntos.estiloBotaoPadrao(context),
+                  onPressed: () =>
+                      Navigator.pushNamed(context, "/vendasScreen"),
+                  child: Text(
+                    'Vendas',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
@@ -56,37 +65,7 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, "/leituraCodigoBarras"),
                   child: Text(
                     'Leitura Produto',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
-                  ),
-                ),
-                SizedBox(height: 30),
-                TextButton(
-                  style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, "/cadastroVendas"),
-                  child: Text(
-                    'Cadastro de Venda',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
-                  ),
-                ),
-                SizedBox(height: 30),
-                TextButton(
-                  style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, "/vendasScreen"),
-                  child: Text(
-                    'Tela de Vendas',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
-                  ),
-                ),
-                SizedBox(height: 30),
-                TextButton(
-                  style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, "/clientes"),
-                  child: Text(
-                    'Clientes',
-                    style: StylesProntos.textBotao(context,'20',Colors.white),
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
                 SizedBox(height: 30),
