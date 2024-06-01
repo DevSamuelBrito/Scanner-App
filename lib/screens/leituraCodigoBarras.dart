@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'cadastrarProdutos_page.dart';
 
 class LeituraCodigoBarras extends StatefulWidget {
   @override
@@ -7,25 +9,90 @@ class LeituraCodigoBarras extends StatefulWidget {
 }
 
 class _LeituraCodigoBarras extends State<LeituraCodigoBarras> {
-  String _scannerResult = 'Resultado do scanner';
+  String barcode = '';
+  TextEditingController _barcodeController = TextEditingController();
 
-  Future<void> scannerCode() async {
+  Future<String> scanBarcode() async {
     try {
-      final scannerResult = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666', // Cor da linha de escaneamento
-        'Cancelar', // Texto de cancelar
-        true, // Mostra a linha de escaneamento
-        ScanMode.BARCODE, // Modo de escaneamento (Barcode ou QrCode)
-      );
-      if (!mounted) return;
-
-      setState(() {
-        _scannerResult = scannerResult;
-      });
+      String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+      if (barcodeScanRes == '-1') {
+        return '';
+      }
+      return barcodeScanRes;
     } catch (e) {
+      return '';
+    }
+  }
+
+  Future<bool> checkBarcodeExists(String barcode) async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('Produtos')
+        .where('codigoBarras', isEqualTo: barcode)
+        .get();
+    final List<DocumentSnapshot> documents = result.docs;
+    return documents.isNotEmpty;
+  }
+
+  Future<void> scanAndCheckBarcode() async {
+    while (true) {
+      String scannedBarcode = await scanBarcode();
+      if (scannedBarcode.isNotEmpty) {
+        bool exists = await checkBarcodeExists(scannedBarcode);
+        setState(() {
+          barcode = scannedBarcode;
+        });
+        if (exists) {
+          // Código de barras já existe no Firestore
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Código de barras já existe no banco de dados!'),
+          ));
+          Navigator.of(context).pop();
+        } else {
+          // Código de barras não existe no Firestore
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Código de barras não encontrado no banco de dados.'),
+          ));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CadastrarProdutosPage(
+                codigoBarras: scannedBarcode,
+              ),
+            ),
+          );
+          break;
+        }
+      }
+    }
+  }
+
+  void checkAndFetchBarcode() async {
+    String inputBarcode = _barcodeController.text.trim();
+    if (inputBarcode.isNotEmpty) {
+      bool exists = await checkBarcodeExists(inputBarcode);
       setState(() {
-        _scannerResult = 'Erro ao escanear: $e';
+        barcode = inputBarcode;
       });
+      if (exists) {
+        // Código de barras já existe no Firestore
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Código de barras já existe no banco de dados!'),
+        ));
+      } else {
+        // Código de barras não existe no Firestore
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Código de barras não encontrado no banco de dados.'),
+        ));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CadastrarProdutosPage(
+              codigoBarras: inputBarcode,
+            ),
+          ),
+        );
+      }
     }
   }
 
@@ -33,25 +100,42 @@ class _LeituraCodigoBarras extends State<LeituraCodigoBarras> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Leitura Código de Barras'),
+        title: Text('Leitor de Código de Barras'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Resultado:'),
-            Text(
-              _scannerResult,
-              style: Theme.of(context).textTheme.headlineMedium,
+            Text('Código de barras: $barcode'),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: scanAndCheckBarcode,
+              child: Text('Ler Código de Barras'),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _barcodeController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: 'Digite o código de barras manualmente',
+                labelText: 'Código de Barras',
+                border: OutlineInputBorder(),
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => scannerCode(),
-              child: Text('Escanear código de barras'),
+              onPressed: checkAndFetchBarcode,
+              child: Text('Buscar Código de Barras'),
             ),
           ],
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _barcodeController.dispose();
+    super.dispose();
   }
 }
