@@ -58,8 +58,6 @@ class TelaResumo extends StatelessWidget {
                       children: [
                         pw.Text('Nome do Produto: ${produto['nomeProd']}',
                             style: pw.TextStyle(fontSize: 20)),
-                        pw.Text('ID do Produto: ${produto['idProduto']}',
-                            style: pw.TextStyle(fontSize: 20)),
                         pw.Text('Quantidade: ${produto['qtd']}',
                             style: pw.TextStyle(fontSize: 20)),
                         pw.SizedBox(height: 10),
@@ -132,7 +130,6 @@ class TelaResumo extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Nome do Produto: ${produtos['nomeProd']}'),
-                          Text('ID do Produto: ${produtos['idProduto']}'),
                           Text('Quantidade: ${produtos['qtd']}'),
                           SizedBox(
                             height: 8,
@@ -141,19 +138,6 @@ class TelaResumo extends StatelessWidget {
                       );
                     },
                   )
-
-                  // if (data.containsKey('Amount') && data['sAmount'] != null)
-                  //   Text((data['Amount'] as num).toStringAsFixed(1)),
-                  // if (data.containsKey('cidade') && data['cidade'] != null)
-                  //   Text(data['cidade'] ?? 'Cidade não disponível'),
-                  // if (data.containsKey('cnpj') && data['cnpj'] != null)
-                  //   Text(data['cnpj'] ?? 'Cnpj não disponível'),
-                  // if (data.containsKey('price') && data['price'] != null)
-                  //   Text((data['price'] as num).toStringAsFixed(1) ??
-                  //       "Preço não dísponível"),
-                  // if (data.containsKey('telefone') &&
-                  //     data['telefone'] != null)
-                  //   Text(data['telefone'] ?? 'Telefone não disponível'),
                 ],
               ),
             )
@@ -163,96 +147,3 @@ class TelaResumo extends StatelessWidget {
     );
   }
 }
-
-
-//   // Stream<List<DocumentSnapshot>> combiSneStreams() {
-//   //   var vendasStream = firestore
-//   //       .collection('Vendas')
-//   //       .snapshots()
-//   //       .map((snapshot) => snapshot.docs);
-//   //   var clienteStream = firestore
-//   //       .collection('Clientes')
-//   //       .snapshots()
-//   //       .map((snapshot) => snapshot.docs);
-
-//   //   return CombineLatestStream.list([vendasStream, clienteStream])
-//   //       .map((list) => list.expand((x) => x).toList());
-//   // }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("Tela de Resumo"),
-//         actions: [
-//           IconButton(
-//             onPressed: () =>
-//                 Navigator.pushReplacementNamed(context, '/cadastroVendas'),
-//             icon: Icon(Icons.logout),
-//           ),
-//         ],
-//       ),
-//       body: FutureBuilder<DocumentSnapshot>(
-//         future: getLastSale(),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return Center(child: CircularProgressIndicator());
-//           } else if (snapshot.hasError) {
-//             return Center(child: Text("Error: ${snapshot.error}"));
-//           } else if (!snapshot.hasData) {
-//             return Center(child: Text("No sales found"));
-//           }
-//           var data = snapshot.data?.data() as Map<String, dynamic>?;
-
-//           if (data == null) {
-//             return Center(child: Text("No data available"));
-//           }
-
-//           List<dynamic> produtos = data['produtos'];
-
-//           return ListView(children: [
-//             ListTile(
-//               title: (Text(data['nomeCliente'])),
-//               subtitle: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(data['Data'] ?? "Data não dísponivel"),
-//                   Text(data['Time'] ?? "Tempo não dísponível"),
-//                   SizedBox(height: 30),
-//                   Text('Produto:',
-//                       style: TextStyle(fontWeight: FontWeight.bold)),
-//                   ...produtos.map((produtos) {
-//                     return Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Text('Nome do Produto: ${produtos['nomeProd']}'),
-//                         Text('ID do Produto: ${produtos['idProdtuo']}'),
-//                         Text('Quantidade: ${produtos['qtd']}'),
-//                         SizedBox(
-//                           height: 8,
-//                         )
-//                       ],
-//                     );
-//                   })
-
-//                   // if (data.containsKey('Amount') && data['sAmount'] != null)
-//                   //   Text((data['Amount'] as num).toStringAsFixed(1)),
-//                   // if (data.containsKey('cidade') && data['cidade'] != null)
-//                   //   Text(data['cidade'] ?? 'Cidade não disponível'),
-//                   // if (data.containsKey('cnpj') && data['cnpj'] != null)
-//                   //   Text(data['cnpj'] ?? 'Cnpj não disponível'),
-//                   // if (data.containsKey('price') && data['price'] != null)
-//                   //   Text((data['price'] as num).toStringAsFixed(1) ??
-//                   //       "Preço não dísponível"),
-//                   // if (data.containsKey('telefone') &&
-//                   //     data['telefone'] != null)
-//                   //   Text(data['telefone'] ?? 'Telefone não disponível'),
-//                 ],
-//               ),
-//             )
-//           ]);
-//         },
-//       ),
-//     );
-//   }
-// }

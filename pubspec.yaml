@@ -50,6 +50,7 @@ dependencies:
   pdf: 3.10.8
   printing: ^5.5.0
   flutter_barcode_scanner: ^2.0.0
+  flutter_typeahead: ^4.0.0
 
 
 

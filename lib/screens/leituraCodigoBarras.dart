@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'cadastrarProdutos_page.dart';
+import 'package:scanner_app/screens/cadastrarVendas.dart';
+import 'package:scanner_app/screens/cadastrarProdutos_page.dart';
 
 class LeituraCodigoBarras extends StatefulWidget {
   @override
-  _LeituraCodigoBarras createState() => _LeituraCodigoBarras();
+  _LeituraCodigoBarrasState createState() => _LeituraCodigoBarrasState();
 }
 
-class _LeituraCodigoBarras extends State<LeituraCodigoBarras> {
+class _LeituraCodigoBarrasState extends State<LeituraCodigoBarras> {
   String barcode = '';
   TextEditingController _barcodeController = TextEditingController();
 
   Future<String> scanBarcode() async {
     try {
       String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
-          '#ff6666', 'Cancel', true, ScanMode.BARCODE);
+        '#ff6666',
+        'Cancelar',
+        true,
+        ScanMode.BARCODE,
+      );
       if (barcodeScanRes == '-1') {
         return '';
       }
@@ -45,9 +50,16 @@ class _LeituraCodigoBarras extends State<LeituraCodigoBarras> {
         if (exists) {
           // Código de barras já existe no Firestore
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Código de barras já existe no banco de dados!'),
+            content: Text('Código de barras encontrado no banco de dados!'),
           ));
-          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  CadastroVendas(scannedBarcode: scannedBarcode),
+            ),
+          );
+          break;
         } else {
           // Código de barras não existe no Firestore
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -77,8 +89,14 @@ class _LeituraCodigoBarras extends State<LeituraCodigoBarras> {
       if (exists) {
         // Código de barras já existe no Firestore
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Código de barras já existe no banco de dados!'),
+          content: Text('Código de barras encontrado no banco de dados!'),
         ));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CadastroVendas(scannedBarcode: inputBarcode),
+          ),
+        );
       } else {
         // Código de barras não existe no Firestore
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

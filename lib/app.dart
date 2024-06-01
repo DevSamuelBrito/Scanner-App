@@ -7,7 +7,7 @@ import 'screens/atualizarProdutos.dart';
 import 'screens/telaProduto.dart';
 import 'screens/homepage.dart';
 import 'screens/leituraCodigoBarras.dart';
-import 'screens/cadastrarVendas.dart';
+import 'package:scanner_app/screens/cadastrarVendas.dart';
 import 'screens/cadastroClientes.dart';
 import 'screens/telaResumo.dart';
 
@@ -27,8 +27,9 @@ class ScannerApp extends StatelessWidget {
             ), // rota para a tela cadastro produtos
         "/leituraCodigoBarras": (context) =>
             LeituraCodigoBarras(), // rota para a tela leitura codigo de barras
-        "/cadastroVendas": (context) =>
-            CadastroVendas(), // rota para a tela leitura cadastro de vendas
+        "/cadastroVendas": (context) => CadastroVendas(
+              scannedBarcode: '',
+            ), // rota para a tela leitura cadastro de vendas
         "/vendasScreen": (context) =>
             SelecaoVendasScreen(), // rota para a tela leitura cadastro de vendas
         "/tabelaProdutos": (context) =>
