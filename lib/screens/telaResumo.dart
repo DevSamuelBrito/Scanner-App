@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:io';
@@ -41,7 +40,7 @@ class TelaResumo extends StatelessWidget {
     }
   }
 
-  Future<void> _printScreen() async {
+  Future<void> _printScreen(BuildContext context) async {
     final doc = pw.Document();
 
     final saleSnapshot = await getLastSale();
@@ -113,12 +112,6 @@ class TelaResumo extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 218, 169, 8),
         title: Text("Tela de Resumo", style: TextStyle(color: Colors.white)),
-        actions: [
-          IconButton(
-            onPressed: () => _printScreen(),
-            icon: Icon(Icons.picture_as_pdf),
-          ),
-        ],
       ),
       body: FutureBuilder<DocumentSnapshot>(
         future: getLastSale(),
@@ -138,35 +131,53 @@ class TelaResumo extends StatelessWidget {
 
           List<dynamic> produtos = data['produtos'];
 
-          return ListView(children: [
-            ListTile(
-              title: (Text(data['nomeCliente'])),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(data['Data'] ?? "Data não dísponivel"),
-                  Text(data['Time'] ?? "Tempo não dísponível"),
-                  SizedBox(height: 30),
-                  Text('Produtos:',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  ...produtos.map(
-                    (produtos) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Nome do Produto: ${produtos['nomeProd']}'),
-                          Text('Quantidade: ${produtos['qtd']}'),
-                          SizedBox(
-                            height: 8,
-                          )
-                        ],
-                      );
-                    },
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: ListView(children: [
+                  ListTile(
+                    title: (Text(data['nomeCliente'])),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(data['Data'] ?? "Data não dísponivel"),
+                        Text(data['Time'] ?? "Tempo não dísponível"),
+                        SizedBox(height: 30),
+                        Text('Produtos:',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        ...produtos.map(
+                          (produtos) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    'Nome do Produto: ${produtos['nomeProd']}'),
+                                Text('Quantidade: ${produtos['qtd']}'),
+                                SizedBox(
+                                  height: 8,
+                                )
+                              ],
+                            );
+                          },
+                        )
+                      ],
+                    ),
                   )
-                ],
+                ]),
               ),
-            )
-          ]);
+              Container(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  onPressed: () => _printScreen(context),
+                  child: Text(
+                    'Compartilhar PDF',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );
