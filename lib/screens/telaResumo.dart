@@ -3,6 +3,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'dart:io';
 
 class TelaResumo extends StatelessWidget {
   TelaResumo({super.key});
@@ -23,30 +26,53 @@ class TelaResumo extends StatelessWidget {
     }
   }
 
+  Future<DocumentSnapshot<Map<String, dynamic>>> getClientData(
+      String clientName) async {
+    var querySnapshot = await firestore
+        .collection('Clientes')
+        .where('name', isEqualTo: clientName)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first;
+    } else {
+      throw Exception('No Client Found');
+    }
+  }
+
   Future<void> _printScreen() async {
     final doc = pw.Document();
 
-    final snapshot = await getLastSale();
-
-    if (snapshot.data() != null) {
-      final data = snapshot.data()!;
-      final produtos = List<Map<String, dynamic>>.from(data['produtos']);
+    final saleSnapshot = await getLastSale();
+    if (saleSnapshot.data() != null) {
+      final saleData = saleSnapshot.data()!;
+      final clientName = saleData['nomeCliente'];
+      final clientSnapshot = await getClientData(clientName);
+      final clientData = clientSnapshot.data()!;
+      final produtos = List<Map<String, dynamic>>.from(saleData['produtos']);
 
       doc.addPage(
         pw.Page(
           build: (pw.Context context) {
             return pw.Center(
               child: pw.Column(
-                // mainAxisAlignment: pw.MainAxisAlignment.center,
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Text('Resumo da Venda', style: pw.TextStyle(fontSize: 35)),
-                  pw.Text('Nome do Cliente: ${data['nomeCliente']}',
+                  pw.Text('Nome do Cliente: $clientName',
                       style: pw.TextStyle(fontSize: 25)),
                   pw.SizedBox(height: 10),
-                  pw.Text('Data: ${data['Data'] ?? "Data não disponível"}',
+                  pw.Text('CNPJ: ${clientData['cnpj']}',
+                      style: pw.TextStyle(fontSize: 20)),
+                  pw.Text('Telefone: ${clientData['telefone']}',
+                      style: pw.TextStyle(fontSize: 20)),
+                  pw.Text('Cidade: ${clientData['cidade']}',
+                      style: pw.TextStyle(fontSize: 20)),
+                  pw.SizedBox(height: 20),
+                  pw.Text('Data: ${saleData['Data'] ?? "Data não disponível"}',
                       style: pw.TextStyle(fontSize: 25)),
-                  pw.Text('Hora: ${data['Time'] ?? "Tempo não disponível"}',
+                  pw.Text('Hora: ${saleData['Time'] ?? "Tempo não disponível"}',
                       style: pw.TextStyle(fontSize: 25)),
                   pw.SizedBox(height: 20),
                   pw.Text('Produtos:',
@@ -72,10 +98,12 @@ class TelaResumo extends StatelessWidget {
       );
 
       // Salvar o PDF no dispositivo
-      final bytes = await doc.save();
-      Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => doc.save(),
-      );
+      final output = await getTemporaryDirectory();
+      final file = File("${output.path}/resumo_venda.pdf");
+      await file.writeAsBytes(await doc.save());
+
+      // Compartilhar o PDF
+      await Share.shareFiles([file.path], text: 'Resumo da última venda');
     }
   }
 
@@ -92,9 +120,6 @@ class TelaResumo extends StatelessWidget {
           ),
         ],
       ),
-      // body: Center(
-      //   child: Text("Clique no ícone PDF para gerar o documento."),
-      // ),
       body: FutureBuilder<DocumentSnapshot>(
         future: getLastSale(),
         builder: (context, snapshot) {
