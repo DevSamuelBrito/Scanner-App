@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:scanner_app/styles/styles.dart';
 
 class Product {
   String? idPronto;
@@ -51,7 +53,7 @@ class _CadastroVendasState extends State<CadastroVendas> {
 
     FirebaseFirestore.instance.collection('Vendas').add({
       'Data': returnTime()['data'],
-      'Time':  returnTime()['time'],
+      'Time': returnTime()['time'],
       'nomeCliente': nomeCliente.text,
       'produtos': produtos.map((produto) {
         return {
@@ -60,6 +62,7 @@ class _CadastroVendasState extends State<CadastroVendas> {
           'qtd': produto.qtd,
         };
       }).toList(),
+      'createdAt': Timestamp.now(),
     });
 
     nomeCliente.clear();
@@ -89,8 +92,12 @@ class _CadastroVendasState extends State<CadastroVendas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro Vendas"),
-      ),
+          backgroundColor: Color.fromARGB(255, 218, 169, 8),
+          title: Text(
+            "Cadastro Vendas",
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true),
       body: Container(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -110,30 +117,42 @@ class _CadastroVendasState extends State<CadastroVendas> {
                   for (var produto in produtos)
                     Column(
                       children: [
-                        TextField(
+                        Text(
+                          'Produto ${produtos.indexOf(produto) + 1}',
+                          style: StylesProntos.textBotao(
+                              context, '18', Colors.black),
+                        ),
+                        SizedBox(height: 10.0),
+                        TextFormField(
                           decoration: InputDecoration(
-                            hintText: 'Insira o id produto',
-                            border: OutlineInputBorder(),
+                            label: Text('Insira o Id produto'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           onChanged: (value) {
                             produto.idPronto = value;
                           },
                         ),
                         SizedBox(height: 10),
-                        TextField(
+                        TextFormField(
                           decoration: InputDecoration(
-                            hintText: 'Insira o nome do produto',
-                            border: OutlineInputBorder(),
+                            label: Text('Insira o Nome do produto'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           onChanged: (value) {
                             produto.nomeProd = value;
                           },
                         ),
                         SizedBox(height: 10),
-                        TextField(
+                        TextFormField(
                           decoration: InputDecoration(
-                            hintText: 'Quantidade',
-                            border: OutlineInputBorder(),
+                            label: Text('Insira a Quantidade'),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
                           onChanged: (value) {
                             produto.qtd = value;
@@ -145,24 +164,42 @@ class _CadastroVendasState extends State<CadastroVendas> {
                 ],
               ),
             ),
-            if (produtos.isNotEmpty)
-              ElevatedButton(
-                onPressed: removerUltimosProdutos,
-                child: Text('Remover Últimos 3 Produtos'),
-              ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  produtos.add(Product());
-                });
-              },
-              child: Text('Adicionar mais um Produto'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () => enviarProdutosVendas(context),
-              child: Text('Cadastrar Venda'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (produtos.isNotEmpty)
+                  TextButton(
+                    style: StylesProntos.pequenoBotaoRed(context),
+                    onPressed: removerUltimosProdutos,
+                    child: Text(
+                      '-',
+                      style:
+                          StylesProntos.textBotao(context, '20', Colors.white),
+                    ),
+                  ),
+                TextButton(
+                  style: StylesProntos.pequenoBotaoVerde(context),
+                  onPressed: () {
+                    setState(
+                      () {
+                        produtos.add(Product());
+                      },
+                    );
+                  },
+                  child: Text(
+                    '+',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  ),
+                ),
+                TextButton(
+                  style: StylesProntos.pequenoBotaoBlue(context),
+                  onPressed: () => enviarProdutosVendas(context),
+                  child: Text(
+                    '✓',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
