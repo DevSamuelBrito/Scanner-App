@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:scanner_app/styles/styles.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class Product {
   String? idPronto;
@@ -92,123 +90,11 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
     });
   }
 
-  Future<void> _scanBarcode(int index) async {
-    try {
-      String barcode = await FlutterBarcodeScanner.scanBarcode(
-        '#ff6666',
-        'Cancelar',
-        true,
-        ScanMode.BARCODE,
-      );
-
-      if (barcode != '-1') {
-        DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
-            .collection('Produtos')
-            .doc(barcode)
-            .get();
-
-        if (productSnapshot.exists) {
-          Map<String, dynamic> productData =
-              productSnapshot.data() as Map<String, dynamic>;
-          setState(() {
-            produtos[index]['idProduto'] = barcode;
-            produtos[index]['nomeProd'] = productData['nomeProd'];
-          });
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Produto não encontrado.'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      print('Erro ao escanear o código de barras: $e');
-    }
-  }
-  void _selectProductFromList(int index) async {
-    DocumentSnapshot? selectedProduct = await showDialog<DocumentSnapshot>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Selecione um produto'),
-          content: Container(
-            width: double.maxFinite,
-            height: 300,
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance.collection('Produtos').snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                if (snapshot.hasError) {
-                  return Center(child: Text('Erro: ${snapshot.error}'));
-                }
-                return ListView(
-                  children: snapshot.data!.docs.map((DocumentSnapshot document) {
-                    Map<String, dynamic> data =
-                        document.data() as Map<String, dynamic>;
-                    return ListTile(
-                      title: Text(data['descricao'] ?? 'Nome não disponível'),
-                      onTap: () {
-                        Navigator.pop(context, document);
-                      },
-                    );
-                  }).toList(),
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
-     if (selectedProduct != null) {
-      Map<String, dynamic> productData =
-          selectedProduct.data() as Map<String, dynamic>;
-      setState(() {
-        produtos[index]['idProduto'] = selectedProduct.id;
-        produtos[index]['descricao'] = productData['descricao'] ?? '';
-      });
-    }
-  }
-  void _showProductSelectionMenu(int index) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Wrap(
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.list),
-              title: Text('Selecionar produto da lista'),
-              onTap: () {
-                Navigator.pop(context);
-                _selectProductFromList(index);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.camera_alt),
-              title: Text('Escanear código de barras'),
-              onTap: () {
-                Navigator.pop(context);
-                _scanBarcode(index);
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
-        title: Text(
-          "Editar Vendas",
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
+        title: Text("Cadastro Vendas"),
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
@@ -217,130 +103,79 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
             TextField(
               controller: nomeCliente,
               decoration: InputDecoration(
-                label: Text('Nome do Cliente'),
                 hintText: nomeCliente!.text.isNotEmpty
-                    ? nomeCliente!.text
+                    ? nomeCliente?.text
                     : 'Nome do Cliente',
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 24),
+            SizedBox(height: 16.0),
             Expanded(
+              // Envolve a seção de produtos em um Expanded para ocupar todo o espaço disponível
               child: ListView.builder(
                 itemCount: produtos.length,
                 itemBuilder: (context, index) {
                   Map<String, dynamic> produto = produtos[index];
                   return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Editar Produto ${index + 1}',
-                        style: StylesProntos.textBotao(
-                            context, '18', Colors.black),
-                      ),
-                      SizedBox(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              decoration: InputDecoration(
-                                label: Text('ID do Produto'),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              controller: TextEditingController(
-                                text: produto['idProduto']?.toString() ?? '',
-                              ),
-                              onChanged: (value) {
-                                produto['idProduto'] = value;
-                              },
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.camera_alt),
-                            onPressed: () => _showProductSelectionMenu(index),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10.0),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          label: Text('Nome do Produto'),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('ID do Produto:'),
+                        TextField(
+                          controller:
+                              TextEditingController(text: produto['idProduto']),
+                          onChanged: (value) {
+                            produtos[index]['idProduto'] = value;
+                          },
                         ),
-                        controller: TextEditingController(
-                          text: produto['descricao'],
+                        SizedBox(height: 10.0),
+                        Text('Nome do Produto:'),
+                        TextField(
+                          controller:
+                              TextEditingController(text: produto['nomeProd']),
+                          onChanged: (value) {
+                            produtos[index]['nomeProd'] = value;
+                          },
                         ),
-                        onChanged: (value) {
-                          produtos[index]['descricao'] = value;
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          label: Text('Quantidade'),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                        SizedBox(height: 10),
+                        Text('Quantidade:'),
+                        TextField(
+                          controller:
+                              TextEditingController(text: produto['qtd']),
+                          onChanged: (value) {
+                            produtos[index]['qtd'] = value;
+                          },
                         ),
-                        controller: TextEditingController(
-                          text: produto['qtd'],
-                        ),
-                        onChanged: (value) {
-                          produtos[index]['qtd'] = value;
-                        },
-                      ),
-                      SizedBox(height: 50),
-                    ],
-                  );
+                        SizedBox(height: 10),
+                      ]);
                 },
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                if (produtos.isNotEmpty)
-                  TextButton(
-                    style: StylesProntos.pequenoBotaoRed(context),
-                    onPressed: removerUltimosProdutos,
-                    child: Text(
-                      '-',
-                      style: StylesProntos.textBotao(
-                          context, '20', Colors.white),
-                    ),
-                  ),
-                TextButton(
-                  style: StylesProntos.pequenoBotaoVerde(context),
-                  onPressed: () => setState(() {
-                    produtos.add({
-                      'idProduto': '',
-                      'nomeProd': '',
-                      'qtd': '',
-                    });
-                  }),
-                  child: Text(
-                    '+',
-                    style: StylesProntos.textBotao(
-                        context, '20', Colors.white),
-                  ),
-                ),
-                TextButton(
-                  style: StylesProntos.pequenoBotaoBlue(context),
-                  onPressed: _AtualizarProdutosVendas,
-                  child: Text(
-                    '✓',
-                    style: StylesProntos.textBotao(
-                        context, '20', Colors.white),
-                  ),
-                ),
-              ],
+            if (produtos.isNotEmpty)
+              ElevatedButton(
+                onPressed: removerUltimosProdutos,
+                child: Text('Remover Últimos 3 Produtos'),
+              ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  produtos.add({
+                    'idProduto': '',
+                    'nomeProd': '',
+                    'qtd': '',
+                  });
+                });
+              },
+              child: Text('Adicionar mais um Produto'),
+            ),
+            SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () => _AtualizarProdutosVendas(),
+              child: Text('Cadastrar Venda'),
             ),
           ],
         ),
       ),
     );
   }
- }
+}
