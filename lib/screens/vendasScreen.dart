@@ -17,7 +17,7 @@ class SelecaoVendasScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         backgroundColor: Color.fromARGB(255, 218, 169, 8),
-        onPressed: () => Navigator.pushNamed(context, "/cadastroVendas,"),
+        onPressed: () => Navigator.pushNamed(context, "/cadastroVendas"),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('Vendas').snapshots(),

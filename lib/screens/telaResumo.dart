@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'dart:io';
 
 class TelaResumo extends StatelessWidget {
   TelaResumo({super.key});
@@ -23,30 +25,53 @@ class TelaResumo extends StatelessWidget {
     }
   }
 
-  Future<void> _printScreen() async {
+  Future<DocumentSnapshot<Map<String, dynamic>>> getClientData(
+      String clientName) async {
+    var querySnapshot = await firestore
+        .collection('Clientes')
+        .where('name', isEqualTo: clientName)
+        .limit(1)
+        .get();
+
+    if (querySnapshot.docs.isNotEmpty) {
+      return querySnapshot.docs.first;
+    } else {
+      throw Exception('No Client Found');
+    }
+  }
+
+  Future<void> _printScreen(BuildContext context) async {
     final doc = pw.Document();
 
-    final snapshot = await getLastSale();
-
-    if (snapshot.data() != null) {
-      final data = snapshot.data()!;
-      final produtos = List<Map<String, dynamic>>.from(data['produtos']);
+    final saleSnapshot = await getLastSale();
+    if (saleSnapshot.data() != null) {
+      final saleData = saleSnapshot.data()!;
+      final clientName = saleData['nomeCliente'];
+      final clientSnapshot = await getClientData(clientName);
+      final clientData = clientSnapshot.data()!;
+      final produtos = List<Map<String, dynamic>>.from(saleData['produtos']);
 
       doc.addPage(
         pw.Page(
           build: (pw.Context context) {
             return pw.Center(
               child: pw.Column(
-                // mainAxisAlignment: pw.MainAxisAlignment.center,
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
                   pw.Text('Resumo da Venda', style: pw.TextStyle(fontSize: 35)),
-                  pw.Text('Nome do Cliente: ${data['nomeCliente']}',
+                  pw.Text('Nome do Cliente: $clientName',
                       style: pw.TextStyle(fontSize: 25)),
                   pw.SizedBox(height: 10),
-                  pw.Text('Data: ${data['Data'] ?? "Data não disponível"}',
+                  pw.Text('CNPJ: ${clientData['cnpj']}',
+                      style: pw.TextStyle(fontSize: 20)),
+                  pw.Text('Telefone: ${clientData['telefone']}',
+                      style: pw.TextStyle(fontSize: 20)),
+                  pw.Text('Cidade: ${clientData['cidade']}',
+                      style: pw.TextStyle(fontSize: 20)),
+                  pw.SizedBox(height: 20),
+                  pw.Text('Data: ${saleData['Data'] ?? "Data não disponível"}',
                       style: pw.TextStyle(fontSize: 25)),
-                  pw.Text('Hora: ${data['Time'] ?? "Tempo não disponível"}',
+                  pw.Text('Hora: ${saleData['Time'] ?? "Tempo não disponível"}',
                       style: pw.TextStyle(fontSize: 25)),
                   pw.SizedBox(height: 20),
                   pw.Text('Produtos:',
@@ -57,8 +82,6 @@ class TelaResumo extends StatelessWidget {
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text('Nome do Produto: ${produto['nomeProd']}',
-                            style: pw.TextStyle(fontSize: 20)),
-                        pw.Text('ID do Produto: ${produto['idProduto']}',
                             style: pw.TextStyle(fontSize: 20)),
                         pw.Text('Quantidade: ${produto['qtd']}',
                             style: pw.TextStyle(fontSize: 20)),
@@ -74,10 +97,12 @@ class TelaResumo extends StatelessWidget {
       );
 
       // Salvar o PDF no dispositivo
-      final bytes = await doc.save();
-      Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => doc.save(),
-      );
+      final output = await getTemporaryDirectory();
+      final file = File("${output.path}/resumo_venda.pdf");
+      await file.writeAsBytes(await doc.save());
+
+      // Compartilhar o PDF
+      await Share.shareFiles([file.path], text: 'Resumo da última venda');
     }
   }
 
@@ -87,16 +112,7 @@ class TelaResumo extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 218, 169, 8),
         title: Text("Tela de Resumo", style: TextStyle(color: Colors.white)),
-        actions: [
-          IconButton(
-            onPressed: () => _printScreen(),
-            icon: Icon(Icons.picture_as_pdf),
-          ),
-        ],
       ),
-      // body: Center(
-      //   child: Text("Clique no ícone PDF para gerar o documento."),
-      // ),
       body: FutureBuilder<DocumentSnapshot>(
         future: getLastSale(),
         builder: (context, snapshot) {
@@ -115,144 +131,55 @@ class TelaResumo extends StatelessWidget {
 
           List<dynamic> produtos = data['produtos'];
 
-          return ListView(children: [
-            ListTile(
-              title: (Text(data['nomeCliente'])),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(data['Data'] ?? "Data não dísponivel"),
-                  Text(data['Time'] ?? "Tempo não dísponível"),
-                  SizedBox(height: 30),
-                  Text('Produtos:',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  ...produtos.map(
-                    (produtos) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Nome do Produto: ${produtos['nomeProd']}'),
-                          Text('ID do Produto: ${produtos['idProduto']}'),
-                          Text('Quantidade: ${produtos['qtd']}'),
-                          SizedBox(
-                            height: 8,
-                          )
-                        ],
-                      );
-                    },
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: ListView(children: [
+                  ListTile(
+                    title: (Text(data['nomeCliente'])),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(data['Data'] ?? "Data não dísponivel"),
+                        Text(data['Time'] ?? "Tempo não dísponível"),
+                        SizedBox(height: 30),
+                        Text('Produtos:',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        ...produtos.map(
+                          (produtos) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                    'Nome do Produto: ${produtos['nomeProd']}'),
+                                Text('Quantidade: ${produtos['qtd']}'),
+                                SizedBox(
+                                  height: 8,
+                                )
+                              ],
+                            );
+                          },
+                        )
+                      ],
+                    ),
                   )
-
-                  // if (data.containsKey('Amount') && data['sAmount'] != null)
-                  //   Text((data['Amount'] as num).toStringAsFixed(1)),
-                  // if (data.containsKey('cidade') && data['cidade'] != null)
-                  //   Text(data['cidade'] ?? 'Cidade não disponível'),
-                  // if (data.containsKey('cnpj') && data['cnpj'] != null)
-                  //   Text(data['cnpj'] ?? 'Cnpj não disponível'),
-                  // if (data.containsKey('price') && data['price'] != null)
-                  //   Text((data['price'] as num).toStringAsFixed(1) ??
-                  //       "Preço não dísponível"),
-                  // if (data.containsKey('telefone') &&
-                  //     data['telefone'] != null)
-                  //   Text(data['telefone'] ?? 'Telefone não disponível'),
-                ],
+                ]),
               ),
-            )
-          ]);
+              Container(
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                  onPressed: () => _printScreen(context),
+                  child: Text(
+                    'Compartilhar PDF',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          );
         },
       ),
     );
   }
 }
-
-
-//   // Stream<List<DocumentSnapshot>> combiSneStreams() {
-//   //   var vendasStream = firestore
-//   //       .collection('Vendas')
-//   //       .snapshots()
-//   //       .map((snapshot) => snapshot.docs);
-//   //   var clienteStream = firestore
-//   //       .collection('Clientes')
-//   //       .snapshots()
-//   //       .map((snapshot) => snapshot.docs);
-
-//   //   return CombineLatestStream.list([vendasStream, clienteStream])
-//   //       .map((list) => list.expand((x) => x).toList());
-//   // }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("Tela de Resumo"),
-//         actions: [
-//           IconButton(
-//             onPressed: () =>
-//                 Navigator.pushReplacementNamed(context, '/cadastroVendas'),
-//             icon: Icon(Icons.logout),
-//           ),
-//         ],
-//       ),
-//       body: FutureBuilder<DocumentSnapshot>(
-//         future: getLastSale(),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return Center(child: CircularProgressIndicator());
-//           } else if (snapshot.hasError) {
-//             return Center(child: Text("Error: ${snapshot.error}"));
-//           } else if (!snapshot.hasData) {
-//             return Center(child: Text("No sales found"));
-//           }
-//           var data = snapshot.data?.data() as Map<String, dynamic>?;
-
-//           if (data == null) {
-//             return Center(child: Text("No data available"));
-//           }
-
-//           List<dynamic> produtos = data['produtos'];
-
-//           return ListView(children: [
-//             ListTile(
-//               title: (Text(data['nomeCliente'])),
-//               subtitle: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(data['Data'] ?? "Data não dísponivel"),
-//                   Text(data['Time'] ?? "Tempo não dísponível"),
-//                   SizedBox(height: 30),
-//                   Text('Produto:',
-//                       style: TextStyle(fontWeight: FontWeight.bold)),
-//                   ...produtos.map((produtos) {
-//                     return Column(
-//                       crossAxisAlignment: CrossAxisAlignment.start,
-//                       children: [
-//                         Text('Nome do Produto: ${produtos['nomeProd']}'),
-//                         Text('ID do Produto: ${produtos['idProdtuo']}'),
-//                         Text('Quantidade: ${produtos['qtd']}'),
-//                         SizedBox(
-//                           height: 8,
-//                         )
-//                       ],
-//                     );
-//                   })
-
-//                   // if (data.containsKey('Amount') && data['sAmount'] != null)
-//                   //   Text((data['Amount'] as num).toStringAsFixed(1)),
-//                   // if (data.containsKey('cidade') && data['cidade'] != null)
-//                   //   Text(data['cidade'] ?? 'Cidade não disponível'),
-//                   // if (data.containsKey('cnpj') && data['cnpj'] != null)
-//                   //   Text(data['cnpj'] ?? 'Cnpj não disponível'),
-//                   // if (data.containsKey('price') && data['price'] != null)
-//                   //   Text((data['price'] as num).toStringAsFixed(1) ??
-//                   //       "Preço não dísponível"),
-//                   // if (data.containsKey('telefone') &&
-//                   //     data['telefone'] != null)
-//                   //   Text(data['telefone'] ?? 'Telefone não disponível'),
-//                 ],
-//               ),
-//             )
-//           ]);
-//         },
-//       ),
-//     );
-//   }
-// }
