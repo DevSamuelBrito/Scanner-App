@@ -84,8 +84,8 @@ class _HomePage extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Color.fromARGB(255, 218, 169, 8),
         title: Text(
-          "Bem Vindo",
-          style: TextStyle(color: Colors.white),
+          "Seja Bem Vindo !",
+          style: TextStyle(color: Colors.white, fontSize: 30),
         ),
         centerTitle: true,
       ),
@@ -97,7 +97,7 @@ class _HomePage extends State<HomePage> {
               child: Container(
                 child: Image.asset(
                   "lib/images/icon.png",
-                  width: 220,
+                  width: 320,
                 ),
               ),
             ),
@@ -142,7 +142,7 @@ class _HomePage extends State<HomePage> {
                     style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 100),
               ],
             ),
           ), // Aqui estava faltando o fechamento da chave
