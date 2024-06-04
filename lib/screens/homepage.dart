@@ -1,13 +1,88 @@
 import 'package:flutter/material.dart';
 import '../styles/styles.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:scanner_app/screens/cadastrarVendas.dart';
+import 'package:scanner_app/screens/cadastrarProdutos_page.dart';
 
 //comentario commit
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  _HomePage createState() => _HomePage();
+}
+
+class _HomePage extends State<HomePage> {
+  String barcode = '';
+
+  Future<String> scanBarcode() async {
+    try {
+      String barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666',
+        'Cancelar',
+        true,
+        ScanMode.BARCODE,
+      );
+      return barcodeScanRes;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  Future<bool> checkBarcodeExists(String barcode) async {
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('Produtos')
+        .where('codigoBarras', isEqualTo: barcode)
+        .get();
+    final List<DocumentSnapshot> documents = result.docs;
+    return documents.isNotEmpty;
+  }
+
+  Future<void> scanAndCheckBarcode() async {
+    String scannedBarcode = await scanBarcode();
+    if (scannedBarcode == '-1') {
+      return;
+    }
+    if (scannedBarcode.isNotEmpty) {
+      bool exists = await checkBarcodeExists(scannedBarcode);
+      setState(() {
+        barcode = scannedBarcode;
+      });
+      if (exists) {
+        // Código de barras já existe no Firestore
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Código de barras encontrado no banco de dados!'),
+          backgroundColor: Colors.green,
+        ));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                CadastroVendas(scannedBarcode: scannedBarcode),
+          ),
+        );
+      } else {
+        // Código de barras não existe no Firestore
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Código de barras não encontrado no banco de dados.'),
+          backgroundColor: Colors.red,
+        ));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CadastrarProdutosPage(
+              codigoBarras: scannedBarcode,
+            ),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: StylesProntos.colorPadrao,
+        backgroundColor: Color.fromARGB(255, 218, 169, 8),
         title: Text(
           "Seja Bem Vindo(a) !",
           style: TextStyle(color: Colors.white, fontSize: 30),
@@ -59,10 +134,9 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 30),
-                TextButton(
+                ElevatedButton(
                   style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, "/leituraCodigoBarras"),
+                  onPressed: () => scanAndCheckBarcode(),
                   child: Text(
                     'Leitura Produto',
                     style: StylesProntos.textBotao(context, '20', Colors.white),
