@@ -42,7 +42,7 @@ class SelecaoVendasScreen extends StatelessWidget {
               var doc = docs[index];
               Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
               return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 child: ListTile(
                   title: Text(
                     data['nomeCliente'] ?? '',
