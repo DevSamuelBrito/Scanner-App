@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:scanner_app/styles/styles.dart';
 import 'dart:io';
 import 'dart:math';
 import 'package:uuid/uuid.dart';
@@ -220,7 +221,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
       ),
       body: SingleChildScrollView(
         child: Center(

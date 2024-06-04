@@ -91,7 +91,7 @@ class cadastroClientes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         title: Text(
           "Cadastro de Clientes",
           style: TextStyle(color: Colors.white),

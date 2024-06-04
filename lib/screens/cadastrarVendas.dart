@@ -145,7 +145,7 @@ class _CadastroVendasState extends State<CadastroVendas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         title: Text(
           "Cadastro Vendas",
           style: TextStyle(color: Colors.white),

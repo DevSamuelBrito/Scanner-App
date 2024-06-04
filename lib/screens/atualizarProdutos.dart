@@ -12,6 +12,7 @@ import 'dart:io';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'dart:math';
 import 'package:http/http.dart' as http;
+import 'package:scanner_app/styles/styles.dart';
 import 'package:uuid/uuid.dart';
 
 // Update page
@@ -230,7 +231,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 218, 169, 8),
+          backgroundColor: StylesProntos.colorPadrao,
           title: Text(
             "Atualizar Produtos",
             style: TextStyle(color: Colors.white),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:scanner_app/screens/atualizarProdutos.dart';
+import 'package:scanner_app/styles/styles.dart';
 
 class TelaProduto extends StatelessWidget {
   TelaProduto({Key? key});
@@ -13,7 +14,7 @@ class TelaProduto extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         title: Text(
           "Tela de Produtos",
           style: TextStyle(color: Colors.white),
@@ -22,7 +23,7 @@ class TelaProduto extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         onPressed: () => Navigator.pushNamed(context, "/cadastroProdutos"),
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(

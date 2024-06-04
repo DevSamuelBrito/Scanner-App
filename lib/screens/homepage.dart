@@ -7,7 +7,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         title: Text(
           "Bem Vindo",
           style: TextStyle(color: Colors.white),
@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
               child: Container(
                 child: Image.asset(
                   "lib/images/icon.png",
-                  width: 220,
+                  width: 320,
                 ),
               ),
             ),

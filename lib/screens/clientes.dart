@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scanner_app/screens/updateClientes.dart';
+import 'package:scanner_app/styles/styles.dart';
 
 class clientes extends StatelessWidget {
   clientes({Key? key});
@@ -11,14 +12,14 @@ class clientes extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         title: Text("Clientes", style: TextStyle(color: Colors.white),),
         centerTitle: true, // Centraliza o título
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => Navigator.pushNamed(context, "/cadastroClientes"),
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
       ),
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: firestore.collection('Clientes').snapshots(),

@@ -127,7 +127,7 @@ class _updateClientesState extends State<updateClientes> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         title: Text(
           "Atualização de Clientes",
           style: TextStyle(color: Colors.white),
@@ -180,33 +180,6 @@ class _updateClientesState extends State<updateClientes> {
                 label: Text("Telefone do Cliente"),
               ),
             ),
-
-            // Row(
-            //   children: [
-
-            //     Flexible(
-            //       flex: 2,
-            //       child: TextField(
-            //         controller: _txtRua,
-            //         decoration: InputDecoration(
-            //           border: OutlineInputBorder(),
-            //           hintText: "Rua",
-            //         ),
-            //         ),
-            //     ),
-
-            //     Flexible(
-            //       flex: 1,
-            //       child: TextField(
-            //         controller: _txtNumeroCasa,
-            //         decoration: InputDecoration(
-            //           border: OutlineInputBorder(),
-            //           hintText: "Número",
-            //         ),
-            //       ),
-            //     ),
-            // ],
-            // ),
 
             Container(
               margin: EdgeInsets.only(top: 10),

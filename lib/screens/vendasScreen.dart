@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scanner_app/screens/atualizacaodeVendas.dart';
+import 'package:scanner_app/styles/styles.dart';
 
 class SelecaoVendasScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         title: Text(
           'Selecione uma venda',
           style: TextStyle(color: Colors.white),
@@ -16,7 +17,7 @@ class SelecaoVendasScreen extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         onPressed: () => Navigator.pushNamed(context, "/cadastroVendas"),
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -36,12 +37,12 @@ class SelecaoVendasScreen extends StatelessWidget {
 
           return ListView.separated(
             itemCount: docs.length,
-            separatorBuilder: (context, index) => SizedBox(height: 10),
+            separatorBuilder: (context, index) => SizedBox(height: 1),
             itemBuilder: (context, index) {
               var doc = docs[index];
               Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
               return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 child: ListTile(
                   title: Text(
                     data['nomeCliente'] ?? '',

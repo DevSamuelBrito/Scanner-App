@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
+import 'package:scanner_app/styles/styles.dart';
 import 'package:share_plus/share_plus.dart';
 import 'dart:io';
 
@@ -110,7 +111,7 @@ class TelaResumo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         title: Text("Tela de Resumo", style: TextStyle(color: Colors.white)),
       ),
       body: FutureBuilder<DocumentSnapshot>(
