@@ -131,52 +131,73 @@ class TelaResumo extends StatelessWidget {
 
           List<dynamic> produtos = data['produtos'];
 
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: ListView(children: [
-                  ListTile(
-                    title: (Text(data['nomeCliente'])),
-                    subtitle: Column(
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(data['Data'] ?? "Data não dísponivel"),
-                        Text(data['Time'] ?? "Tempo não dísponível"),
-                        SizedBox(height: 30),
+                        Text(
+                          data['nomeCliente'],
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 10),
+                        Text('Data: ${data['Data'] ?? "Data não disponível"}',
+                            style: TextStyle(fontSize: 18)),
+                        Text('Hora: ${data['Time'] ?? "Tempo não disponível"}',
+                            style: TextStyle(fontSize: 18)),
+                        SizedBox(height: 20),
                         Text('Produtos:',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20)),
+                        SizedBox(height: 10),
                         ...produtos.map(
-                          (produtos) {
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                    'Nome do Produto: ${produtos['nomeProd']}'),
-                                Text('Quantidade: ${produtos['qtd']}'),
-                                SizedBox(
-                                  height: 8,
-                                )
-                              ],
+                          (produto) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Nome do Produto: ${produto['nomeProd']}',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text('Quantidade: ${produto['qtd']}',
+                                      style: TextStyle(fontSize: 16)),
+                                  Divider(),
+                                ],
+                              ),
                             );
                           },
-                        )
+                        ),
                       ],
                     ),
-                  )
-                ]),
-              ),
-              Container(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-                  onPressed: () => _printScreen(context),
-                  child: Text(
-                    'Compartilhar PDF',
-                    style: TextStyle(color: Colors.white),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 20),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: StylesProntos.colorPadrao,
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  onPressed: () => _printScreen(context),
+                  icon: Icon(Icons.share, color: Colors.white),
+                  label: Text(
+                    'Compartilhar PDF',
+                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),
