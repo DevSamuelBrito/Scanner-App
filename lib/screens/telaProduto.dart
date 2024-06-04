@@ -3,14 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:scanner_app/screens/atualizarProdutos.dart';
-<<<<<<< HEAD
 import 'package:scanner_app/styles/styles.dart';
-=======
 import 'package:scanner_app/screens/homepage.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'cadastrarProdutos_page.dart';
 import 'cadastrarVendas.dart';
->>>>>>> TelaLeituraCodigoBarras
 
 class TelaProduto extends StatefulWidget {
   @override
