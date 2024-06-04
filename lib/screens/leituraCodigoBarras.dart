@@ -21,9 +21,6 @@ class _LeituraCodigoBarrasState extends State<LeituraCodigoBarras> {
         true,
         ScanMode.BARCODE,
       );
-      if (barcodeScanRes == '-1') {
-        return '';
-      }
       return barcodeScanRes;
     } catch (e) {
       return '';
@@ -40,73 +37,44 @@ class _LeituraCodigoBarrasState extends State<LeituraCodigoBarras> {
   }
 
   Future<void> scanAndCheckBarcode() async {
-    while (true) {
-      String scannedBarcode = await scanBarcode();
-      if (scannedBarcode.isNotEmpty) {
-        bool exists = await checkBarcodeExists(scannedBarcode);
-        setState(() {
-          barcode = scannedBarcode;
-        });
-        if (exists) {
-          // Código de barras já existe no Firestore
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Código de barras encontrado no banco de dados!'),
-          ));
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  CadastroVendas(scannedBarcode: scannedBarcode),
-            ),
-          );
-          break;
-        } else {
-          // Código de barras não existe no Firestore
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Código de barras não encontrado no banco de dados.'),
-          ));
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CadastrarProdutosPage(
-                codigoBarras: scannedBarcode,
-              ),
-            ),
-          );
-          break;
-        }
-      }
+    String scannedBarcode = await scanBarcode();
+    if (scannedBarcode == '-1') {
+      // O usuário cancelou o scanner, mostrar mensagem e não fazer mais nada
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Leitura de código de barras cancelada.'),
+        backgroundColor: Colors.red,
+      ));
+      return;
     }
-  }
-
-  void checkAndFetchBarcode() async {
-    String inputBarcode = _barcodeController.text.trim();
-    if (inputBarcode.isNotEmpty) {
-      bool exists = await checkBarcodeExists(inputBarcode);
+    if (scannedBarcode.isNotEmpty) {
+      bool exists = await checkBarcodeExists(scannedBarcode);
       setState(() {
-        barcode = inputBarcode;
+        barcode = scannedBarcode;
       });
       if (exists) {
         // Código de barras já existe no Firestore
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Código de barras encontrado no banco de dados!'),
+          backgroundColor: Colors.green,
         ));
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CadastroVendas(scannedBarcode: inputBarcode),
+            builder: (context) =>
+                CadastroVendas(scannedBarcode: scannedBarcode),
           ),
         );
       } else {
         // Código de barras não existe no Firestore
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Código de barras não encontrado no banco de dados.'),
+          backgroundColor: Colors.red,
         ));
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CadastrarProdutosPage(
-              codigoBarras: inputBarcode,
+              codigoBarras: scannedBarcode,
             ),
           ),
         );
@@ -129,21 +97,6 @@ class _LeituraCodigoBarrasState extends State<LeituraCodigoBarras> {
             ElevatedButton(
               onPressed: scanAndCheckBarcode,
               child: Text('Ler Código de Barras'),
-            ),
-            SizedBox(height: 20),
-            TextField(
-              controller: _barcodeController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                hintText: 'Digite o código de barras manualmente',
-                labelText: 'Código de Barras',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: checkAndFetchBarcode,
-              child: Text('Buscar Código de Barras'),
             ),
           ],
         ),
