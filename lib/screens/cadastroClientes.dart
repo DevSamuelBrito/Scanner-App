@@ -7,7 +7,6 @@ import 'package:scanner_app/styles/styles.dart';
 
 class cadastroClientes extends StatelessWidget {
   final _txtName = TextEditingController();
-  final _txtPrice = TextEditingController();
   final _txtCnpj = MaskedTextController(mask: '00.000.000/0000-00');
   final _txtCidade = TextEditingController();
   final _txtTelefone = MaskedTextController(mask: '(00)00000-0000');
@@ -19,29 +18,6 @@ class cadastroClientes extends StatelessWidget {
         backgroundColor: Colors.red,
         content: Text('Insira um nome para o Cliente'),
       ));
-      return;
-    }
-
-    final priceText = _txtPrice.text.trim();
-    if (priceText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content:
-              Text('Por favor, insira um valor para o multiplicador de preço'),
-        ),
-      );
-      return;
-    }
-    final price = double.tryParse(priceText);
-    if (price == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(
-              'O valor do multiplicador de preço deve ser um número válido. (Separador de decimais é um ponto ".")'),
-        ),
-      );
       return;
     }
 
@@ -71,7 +47,6 @@ class cadastroClientes extends StatelessWidget {
 
     FirebaseFirestore.instance.collection('Clientes').add({
       'name': _txtName.text,
-      'price': price,
       'cnpj': _txtCnpj.text,
       'telefone': _txtTelefone.text,
       'cidade': _txtCidade.text,
@@ -108,15 +83,6 @@ class cadastroClientes extends StatelessWidget {
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
                     label: Text("Nome do Cliente")),
-              ),
-              SizedBox(height: 10),
-
-              TextField(
-                controller: _txtPrice,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  label: Text("Multiplicador de preço do Cliente"),
-                ),
               ),
               SizedBox(height: 10),
               TextField(
@@ -181,7 +147,10 @@ class cadastroClientes extends StatelessWidget {
                     backgroundColor:
                         MaterialStateProperty.all<Color>(Colors.green),
                   ),
-                  child: Text("Salvar", style: StylesProntos.textBotao(context, '14', Colors.white),),
+                  child: Text(
+                    "Salvar",
+                    style: StylesProntos.textBotao(context, '14', Colors.white),
+                  ),
                   onPressed: () => _onSaved(context),
                 ),
               ),

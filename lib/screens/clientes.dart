@@ -13,7 +13,10 @@ class clientes extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: StylesProntos.colorPadrao,
-        title: Text("Clientes", style: TextStyle(color: Colors.white),),
+        title: Text(
+          "Clientes",
+          style: TextStyle(color: Colors.white),
+        ),
         centerTitle: true, // Centraliza o título
       ),
       floatingActionButton: FloatingActionButton(
@@ -53,7 +56,6 @@ class clientes extends StatelessWidget {
                           height:
                               4), // Adiciona espaçamento entre o nome e as outras informações
                       Text('CNPJ: ${doc['cnpj']}'),
-                      Text('Preço: ${doc['price']}'),
                       Text('Cidade: ${doc['cidade']}'),
                       Text('Telefone: ${doc['telefone']}'),
                     ],
