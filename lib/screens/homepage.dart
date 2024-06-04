@@ -9,8 +9,8 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: StylesProntos.colorPadrao,
         title: Text(
-          "Bem Vindo",
-          style: TextStyle(color: Colors.white),
+          "Seja Bem Vindo(a) !",
+          style: TextStyle(color: Colors.white, fontSize: 30),
         ),
         centerTitle: true,
       ),
@@ -22,7 +22,7 @@ class HomePage extends StatelessWidget {
               child: Container(
                 child: Image.asset(
                   "lib/images/icon.png",
-                  width: 320,
+                  width: 315,
                 ),
               ),
             ),
@@ -68,7 +68,7 @@ class HomePage extends StatelessWidget {
                     style: StylesProntos.textBotao(context, '20', Colors.white),
                   ),
                 ),
-                SizedBox(height: 30),
+                SizedBox(height: 100),
               ],
             ),
           ), // Aqui estava faltando o fechamento da chave
