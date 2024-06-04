@@ -59,7 +59,6 @@ class TelaResumo extends StatelessWidget {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Text('Resumo da Venda', style: pw.TextStyle(fontSize: 35)),
                   pw.Text('Nome do Cliente: $clientName',
                       style: pw.TextStyle(fontSize: 25)),
                   pw.SizedBox(height: 10),
