@@ -154,7 +154,7 @@ class CustomIconTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 220, // Definindo uma largura fixa para o botão
+      width: 225, // Definindo uma largura fixa para o botão
       child: TextButton(
         style: StylesProntos.estiloBotaoPadrao(context),
         onPressed: onPressed,
