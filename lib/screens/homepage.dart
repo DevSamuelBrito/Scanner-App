@@ -5,7 +5,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scanner_app/screens/cadastrarVendas.dart';
 import 'package:scanner_app/screens/cadastrarProdutos_page.dart';
 
-//comentario commit
 class HomePage extends StatefulWidget {
   @override
   _HomePage createState() => _HomePage();
@@ -48,7 +47,6 @@ class _HomePage extends State<HomePage> {
         barcode = scannedBarcode;
       });
       if (exists) {
-        // Código de barras já existe no Firestore
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Código de barras encontrado no banco de dados!'),
           backgroundColor: Colors.green,
@@ -61,7 +59,6 @@ class _HomePage extends State<HomePage> {
           ),
         );
       } else {
-        // Código de barras não existe no Firestore
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Código de barras não encontrado no banco de dados.'),
           backgroundColor: Colors.red,
@@ -82,71 +79,99 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 218, 169, 8),
+        backgroundColor: StylesProntos.colorPadrao,
         title: Text(
-          "Seja Bem Vindo !",
-          style: TextStyle(color: Colors.white, fontSize: 30),
+          "Seja Bem Vindo!",
+          style: TextStyle(
+              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Center(
-              child: Container(
-                child: Image.asset(
-                  "lib/images/icon.png",
-                  width: 320,
+      body: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Center(
+                child: Container(
+                  child: Image.asset(
+                    "lib/images/icon.png",
+                    width: 320,
+                  ),
                 ),
               ),
             ),
-          ),
-          Center(
-            child: Column(
-              children: [
-                TextButton(
-                  style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () => Navigator.pushNamed(context, "/clientes"),
-                  child: Text(
-                    'Clientes',
-                    style: StylesProntos.textBotao(context, '20', Colors.white),
+            Center(
+              child: Column(
+                children: [
+                  CustomIconTextButton(
+                    icon: Icons.people,
+                    text: 'Clientes',
+                    onPressed: () => Navigator.pushNamed(context, "/clientes"),
                   ),
-                ),
-                SizedBox(height: 30),
-                TextButton(
-                  style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, "/tabelaProdutos"),
-                  child: Text(
-                    'Produtos',
-                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  SizedBox(height: 20),
+                  CustomIconTextButton(
+                    icon: Icons.shopping_cart,
+                    text: 'Produtos',
+                    onPressed: () =>
+                        Navigator.pushNamed(context, "/tabelaProdutos"),
                   ),
-                ),
-                SizedBox(height: 30),
-                TextButton(
-                  style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () =>
-                      Navigator.pushNamed(context, "/vendasScreen"),
-                  child: Text(
-                    'Vendas',
-                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  SizedBox(height: 20),
+                  CustomIconTextButton(
+                    icon: Icons.sell,
+                    text: 'Vendas',
+                    onPressed: () =>
+                        Navigator.pushNamed(context, "/vendasScreen"),
                   ),
-                ),
-                SizedBox(height: 30),
-                ElevatedButton(
-                  style: StylesProntos.estiloBotaoPadrao(context),
-                  onPressed: () => scanAndCheckBarcode(),
-                  child: Text(
-                    'Leitura Produto',
-                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  SizedBox(height: 20),
+                  CustomIconTextButton(
+                    icon: Icons.qr_code_scanner,
+                    text: 'Leitura Produto',
+                    onPressed: () => scanAndCheckBarcode(),
                   ),
-                ),
-                SizedBox(height: 100),
-              ],
+                  SizedBox(height: 40),
+                ],
+              ),
             ),
-          ), // Aqui estava faltando o fechamento da chave
-        ], // Aqui estava faltando a chave de fechamento do children
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CustomIconTextButton extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final VoidCallback onPressed;
+
+  CustomIconTextButton({
+    required this.icon,
+    required this.text,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 220, // Definindo uma largura fixa para o botão
+      child: TextButton(
+        style: StylesProntos.estiloBotaoPadrao(context),
+        onPressed: onPressed,
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 24, color: Colors.white),
+              SizedBox(width: 8),
+              Text(
+                text,
+                style: StylesProntos.textBotao(context, '20', Colors.white),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
