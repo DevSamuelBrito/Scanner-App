@@ -36,13 +36,14 @@ class SelecaoVendasScreen extends StatelessWidget {
           var docs = snapshot.data!.docs;
 
           return ListView.separated(
+            padding: EdgeInsets.only(top: 20),
             itemCount: docs.length,
             separatorBuilder: (context, index) => SizedBox(height: 1),
             itemBuilder: (context, index) {
               var doc = docs[index];
               Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
               return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 child: ListTile(
                   title: Text(
                     data['nomeCliente'] ?? '',

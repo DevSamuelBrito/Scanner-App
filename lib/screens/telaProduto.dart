@@ -108,13 +108,14 @@ class _TelaProduto extends State<TelaProduto> {
           var docs = snapshot.data!.docs;
 
           return ListView(
+            padding: EdgeInsets.only(top: 13),
             children: snapshot.data!.docs.map(
               (DocumentSnapshot document) {
                 Map<String, dynamic> data =
                     document.data() as Map<String, dynamic>;
 
                 return Card(
-                  // faz os cartões
+                  margin: EdgeInsets.symmetric(vertical: 7, horizontal: 10),
                   child: ListTile(
                     title: Text(
                       data['descricao'],

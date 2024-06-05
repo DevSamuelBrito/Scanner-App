@@ -37,6 +37,7 @@ class clientes extends StatelessWidget {
           var docs = snapshot.data!.docs;
 
           return ListView.separated(
+            padding: EdgeInsets.only(top: 20),
             // Utiliza ListView.separated para adicionar espaçamento entre os cartões
             itemCount: docs.length,
             separatorBuilder: (context, index) =>
@@ -44,6 +45,7 @@ class clientes extends StatelessWidget {
             itemBuilder: (context, index) {
               var doc = docs[index];
               return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 child: ListTile(
                   title: Text(
                     doc['name'],

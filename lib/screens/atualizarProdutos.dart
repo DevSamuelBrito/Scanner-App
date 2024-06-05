@@ -48,7 +48,6 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
         .collection('Produtos')
         .doc(widget.document.id)
         .get();
-    var docStorage = await FirebaseStorage.instance.ref('/images');
 
     if (doc.exists) {
       var data = doc.data();
@@ -57,13 +56,28 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
         txtPrecoVenda.text = data['precoVenda'] ?? '';
         txtReferencia.text = data['referencia'] ?? '';
 
-        String imageUrl = data['imageUrl'] ?? '';
+        String? imageUrl = data['imageUrl'];
 
-        final http.Response response = await http.get(Uri.parse(imageUrl));
-        final List<int> imageData = response.bodyBytes;
-        setState(() {
-          imageFile = File.fromRawPath(Uint8List.fromList(imageData));
-        });
+        if (imageUrl != null && imageUrl.isNotEmpty) {
+          try {
+            final http.Response response = await http.get(Uri.parse(imageUrl));
+            final List<int> imageData = response.bodyBytes;
+            setState(() {
+              imageFile = File.fromRawPath(Uint8List.fromList(imageData));
+            });
+          } catch (e) {
+            print('Erro ao carregar a imagem: $e');
+            // Lidar com o erro, por exemplo, exibir uma imagem padrão
+            setState(() {
+              imageFile = null; // Pode definir uma imagem padrão aqui
+            });
+          }
+        } else {
+          // Se não houver URL de imagem válido, definir uma imagem padrão
+          setState(() {
+            imageFile = null; // Defina uma imagem padrão aqui
+          });
+        }
       }
     }
   }
@@ -147,9 +161,10 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
 
   Future<void> _uploadImageToFirebase(String imagePath) async {
     final storage = FirebaseStorage.instance;
+    File file = File(imagePath);
     try {
-      String imageName = DateTime.now().millisecondsSinceEpoch.toString();
-      await storage.ref('images/$imageName').putString(imagePath);
+      String imageName = "images/img-${DateTime.now().toString()}.png";
+      await storage.ref(imageName).putFile(file);
       String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
     } catch (e) {
       print('Erro ao fazer upload da imagem: $e');
