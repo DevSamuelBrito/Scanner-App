@@ -83,7 +83,7 @@ class _HomePage extends State<HomePage> {
         title: Text(
           "Seja Bem Vindo!",
           style: TextStyle(
-              color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -129,7 +129,7 @@ class _HomePage extends State<HomePage> {
                     text: 'Leitura Produto',
                     onPressed: () => scanAndCheckBarcode(),
                   ),
-                  SizedBox(height: 40),
+                  SizedBox(height: 100),
                 ],
               ),
             ),
@@ -167,7 +167,7 @@ class CustomIconTextButton extends StatelessWidget {
               SizedBox(width: 8),
               Text(
                 text,
-                style: StylesProntos.textBotao(context, '20', Colors.white),
+                style: StylesProntos.textBotao(context, '16', Colors.white),
               ),
             ],
           ),
