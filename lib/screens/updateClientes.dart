@@ -25,14 +25,12 @@ class _updateClientesState extends State<updateClientes> {
         .doc(widget.docId)
         .get();
     _txtName.text = doc.data()!['name'];
-    _txtPrice.text = doc.data()!['price'].toString();
     _txtCnpj.text = doc.data()!['cnpj'];
     _txtTelefone.text = doc.data()!['telefone'];
     _txtCidade.text = doc.data()!['cidade'];
   }
 
   final _txtName = TextEditingController();
-  final _txtPrice = TextEditingController();
   final _txtCnpj = MaskedTextController(mask: '00.000.000/0000-00');
   final _txtTelefone = MaskedTextController(mask: '(00)00000-0000');
   final _txtCidade = TextEditingController();
@@ -49,28 +47,7 @@ class _updateClientesState extends State<updateClientes> {
       return;
     }
 
-    final priceText = _txtPrice.text.trim();
-    if (priceText.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content:
-              Text('Por favor, insira um valor para o multiplicador de preço'),
-        ),
-      );
-      return;
-    }
-    final price = double.tryParse(priceText);
-    if (price == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red,
-          content: Text(
-              'O valor do multiplicador de preço deve ser um número válido. (Separador de decimais é um ponto ".")'),
-        ),
-      );
-      return;
-    }
+    
 
     final cnpjText = _txtCnpj.text.trim();
     if (cnpjText.isEmpty) {
@@ -98,7 +75,6 @@ class _updateClientesState extends State<updateClientes> {
 
     FirebaseFirestore.instance.collection('Clientes').doc(widget.docId).update({
       'name': _txtName.text,
-      'price': price,
       'cnpj': _txtCnpj.text,
       'telefone': _txtTelefone.text,
       'cidade': _txtCidade.text,
@@ -147,13 +123,7 @@ class _updateClientesState extends State<updateClientes> {
             ),
             SizedBox(height: 10),
 
-            TextField(
-              controller: _txtPrice,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                label: Text("Multiplicador de preço do Cliente"),
-              ),
-            ),
+            
             SizedBox(height: 10),
 
             TextField(
