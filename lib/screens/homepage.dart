@@ -75,8 +75,15 @@ class _HomePage extends State<HomePage> {
     }
   }
 
+  double getResponsiveIconSize(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    return screenWidth * 0.06; // Ajuste a proporção conforme necessário
+  }
+
   @override
   Widget build(BuildContext context) {
+    double iconSize = getResponsiveIconSize(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: StylesProntos.colorPadrao,
@@ -91,86 +98,131 @@ class _HomePage extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
+            SizedBox(height: 20),
+            Container(
               child: Center(
-                child: Container(
+                child: FractionallySizedBox(
+                  widthFactor: 0.6,
                   child: Image.asset(
                     "lib/images/icon.png",
-                    width: 320,
+                    width: 300,
                   ),
                 ),
               ),
             ),
-            Center(
-              child: Column(
-                children: [
-                  CustomIconTextButton(
-                    icon: Icons.people,
-                    text: 'Clientes',
-                    onPressed: () => Navigator.pushNamed(context, "/clientes"),
-                  ),
-                  SizedBox(height: 20),
-                  CustomIconTextButton(
-                    icon: Icons.shopping_cart,
-                    text: 'Produtos',
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/tabelaProdutos"),
-                  ),
-                  SizedBox(height: 20),
-                  CustomIconTextButton(
-                    icon: Icons.sell,
-                    text: 'Vendas',
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/vendasScreen"),
-                  ),
-                  SizedBox(height: 20),
-                  CustomIconTextButton(
-                    icon: Icons.qr_code_scanner,
-                    text: 'Leitura Produto',
-                    onPressed: () => scanAndCheckBarcode(),
-                  ),
-                  SizedBox(height: 100),
-                ],
+            Expanded(
+              child: Center(
+                child: ListView(
+                  padding: EdgeInsets.all(16),
+                  children: [
+                    SizedBox(height: 40),
+                    FractionallySizedBox(
+                      widthFactor: 0.6,
+                      child: TextButton(
+                        style: StylesProntos.estiloBotaoPadrao(context),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, "/clientes"),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.people,
+                                  size: iconSize, color: Colors.white),
+                              SizedBox(width: 8),
+                              Text(
+                                'Clientes',
+                                style: StylesProntos.textBotao(
+                                    context, '16', Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    FractionallySizedBox(
+                      widthFactor: 0.6,
+                      child: TextButton(
+                        style: StylesProntos.estiloBotaoPadrao(context),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, "/tabelaProdutos"),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.shopping_cart,
+                                  size: iconSize, color: Colors.white),
+                              SizedBox(width: 8),
+                              Text(
+                                'Produtos',
+                                style: StylesProntos.textBotao(
+                                    context, '16', Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    FractionallySizedBox(
+                      widthFactor: 0.6,
+                      child: TextButton(
+                        style: StylesProntos.estiloBotaoPadrao(context),
+                        onPressed: () =>
+                            Navigator.pushNamed(context, "/vendasScreen"),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.sell,
+                                  size: iconSize, color: Colors.white),
+                              SizedBox(width: 8),
+                              Text(
+                                'Vendas',
+                                style: StylesProntos.textBotao(
+                                    context, '16', Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    FractionallySizedBox(
+                      widthFactor: 0.6,
+                      child: TextButton(
+                        style: StylesProntos.estiloBotaoPadrao(context),
+                        onPressed: () => scanAndCheckBarcode(),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.qr_code_scanner,
+                                  size: iconSize, color: Colors.white),
+                              SizedBox(width: 8),
+                              Text(
+                                'Leitura Produto',
+                                style: StylesProntos.textBotao(
+                                    context, '16', Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class CustomIconTextButton extends StatelessWidget {
-  final IconData icon;
-  final String text;
-  final VoidCallback onPressed;
-
-  CustomIconTextButton({
-    required this.icon,
-    required this.text,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 225, // Definindo uma largura fixa para o botão
-      child: TextButton(
-        style: StylesProntos.estiloBotaoPadrao(context),
-        onPressed: onPressed,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 24, color: Colors.white),
-              SizedBox(width: 8),
-              Text(
-                text,
-                style: StylesProntos.textBotao(context, '16', Colors.white),
-              ),
-            ],
-          ),
         ),
       ),
     );
