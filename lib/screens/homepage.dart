@@ -80,13 +80,53 @@ class _HomePage extends State<HomePage> {
     return screenWidth * 0.06; // Ajuste a proporção conforme necessário
   }
 
+  Widget _buildButton(
+      {required IconData icon,
+      required String label,
+      required Function onPressed,
+      required BuildContext context}) {
+    double iconSize = getResponsiveIconSize(context);
+    return FractionallySizedBox(
+      widthFactor: 0.6,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(0, 0, 0, 1).withOpacity(0.15),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: TextButton(
+          style: StylesProntos.estiloBotaoPadrao(context),
+          onPressed: () => onPressed(),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(icon, size: iconSize, color: Colors.white),
+                SizedBox(width: 8),
+                Text(
+                  label,
+                  style: StylesProntos.textBotao(context, '16', Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    double iconSize = getResponsiveIconSize(context);
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: StylesProntos.colorPadrao,
+        backgroundColor: const Color.fromRGBO(250, 191, 79, 1),
         title: Text(
           "Seja Bem Vindo!",
           style: TextStyle(
@@ -105,7 +145,7 @@ class _HomePage extends State<HomePage> {
                   widthFactor: 0.6,
                   child: Image.asset(
                     "lib/images/icon.png",
-                    width: 300,
+                    width: 30,
                   ),
                 ),
               ),
@@ -116,107 +156,35 @@ class _HomePage extends State<HomePage> {
                   padding: EdgeInsets.all(16),
                   children: [
                     SizedBox(height: 40),
-                    FractionallySizedBox(
-                      widthFactor: 0.6,
-                      child: TextButton(
-                        style: StylesProntos.estiloBotaoPadrao(context),
-                        onPressed: () =>
-                            Navigator.pushNamed(context, "/clientes"),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.people,
-                                  size: iconSize, color: Colors.white),
-                              SizedBox(width: 8),
-                              Text(
-                                'Clientes',
-                                style: StylesProntos.textBotao(
-                                    context, '16', Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    _buildButton(
+                      icon: Icons.people,
+                      label: 'Clientes',
+                      onPressed: () =>
+                          Navigator.pushNamed(context, "/clientes"),
+                      context: context,
                     ),
-                    SizedBox(height: 20),
-                    FractionallySizedBox(
-                      widthFactor: 0.6,
-                      child: TextButton(
-                        style: StylesProntos.estiloBotaoPadrao(context),
-                        onPressed: () =>
-                            Navigator.pushNamed(context, "/tabelaProdutos"),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.shopping_cart,
-                                  size: iconSize, color: Colors.white),
-                              SizedBox(width: 8),
-                              Text(
-                                'Produtos',
-                                style: StylesProntos.textBotao(
-                                    context, '16', Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    SizedBox(height: 25),
+                    _buildButton(
+                      icon: Icons.shopping_cart,
+                      label: 'Produtos',
+                      onPressed: () =>
+                          Navigator.pushNamed(context, "/tabelaProdutos"),
+                      context: context,
                     ),
-                    SizedBox(height: 20),
-                    FractionallySizedBox(
-                      widthFactor: 0.6,
-                      child: TextButton(
-                        style: StylesProntos.estiloBotaoPadrao(context),
-                        onPressed: () =>
-                            Navigator.pushNamed(context, "/vendasScreen"),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.sell,
-                                  size: iconSize, color: Colors.white),
-                              SizedBox(width: 8),
-                              Text(
-                                'Vendas',
-                                style: StylesProntos.textBotao(
-                                    context, '16', Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    SizedBox(height: 25),
+                    _buildButton(
+                      icon: Icons.sell,
+                      label: 'Vendas',
+                      onPressed: () =>
+                          Navigator.pushNamed(context, "/vendasScreen"),
+                      context: context,
                     ),
-                    SizedBox(height: 20),
-                    FractionallySizedBox(
-                      widthFactor: 0.6,
-                      child: TextButton(
-                        style: StylesProntos.estiloBotaoPadrao(context),
-                        onPressed: () => scanAndCheckBarcode(),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.qr_code_scanner,
-                                  size: iconSize, color: Colors.white),
-                              SizedBox(width: 8),
-                              Text(
-                                'Leitura Produto',
-                                style: StylesProntos.textBotao(
-                                    context, '16', Colors.white),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    SizedBox(height: 25),
+                    _buildButton(
+                      icon: Icons.qr_code_scanner,
+                      label: 'Leitura Produto',
+                      onPressed: () => scanAndCheckBarcode(),
+                      context: context,
                     ),
                   ],
                 ),
