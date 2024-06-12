@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:scanner_app/styles/styles.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/services.dart';
+import 'package:scanner_app/styles/styles.dart';
 
 class Product {
   String? idPronto;
   String? nomeProd;
   String? qtd;
+  double? precoVenda;
   TextEditingController controller;
 
-  Product({this.idPronto, this.nomeProd, this.qtd})
+  Product({this.idPronto, this.nomeProd, this.qtd, this.precoVenda})
       : controller = TextEditingController(text: nomeProd ?? '');
 }
 
@@ -45,10 +46,12 @@ class _CadastroVendasState extends State<CadastroVendas> {
       if (productSnapshot.exists) {
         setState(() {
           produtos.add(Product(
-            idPronto: productSnapshot['produtoId'],
-            nomeProd: productSnapshot['referencia'],
-            qtd: '1',
-          ));
+              idPronto: productSnapshot['produtoId'],
+              nomeProd: productSnapshot['referencia'],
+              qtd: '1',
+              precoVenda: double.tryParse(productSnapshot['precoVenda']
+                  .replaceAll('.', '')
+                  .replaceAll(',', '.'))));
         });
       }
     } catch (e) {
@@ -82,6 +85,13 @@ class _CadastroVendasState extends State<CadastroVendas> {
       return;
     }
 
+    // Calcular o total da venda
+    double totalVenda = produtos.fold(0, (total, produto) {
+      double produtoTotal = double.parse(produto.qtd!) * produto.precoVenda!;
+      return total + produtoTotal;
+    });
+
+    // Enviar para o Firestore
     FirebaseFirestore.instance.collection('Vendas').add({
       'Data': returnTime()['data'],
       'Time': returnTime()['time'],
@@ -91,8 +101,11 @@ class _CadastroVendasState extends State<CadastroVendas> {
           'idProduto': produto.idPronto,
           'nomeProd': produto.nomeProd,
           'qtd': produto.qtd,
+          'precoVenda': produto.precoVenda,
+          'total': double.parse(produto.qtd!) * produto.precoVenda!,
         };
       }).toList(),
+      'totalVenda': totalVenda, // Adiciona o total da venda aqui
       'createdAt': Timestamp.now(),
     });
 
@@ -191,8 +204,7 @@ class _CadastroVendasState extends State<CadastroVendas> {
                       children: [
                         Text(
                           'Produto ${produtos.indexOf(produto) + 1}',
-                          style: StylesProntos.textBotao(
-                              context, '18', Colors.black),
+                          style: TextStyle(fontSize: 18, color: Colors.black),
                         ),
                         SizedBox(height: 10.0),
                         TypeAheadFormField<DocumentSnapshot>(
@@ -218,6 +230,10 @@ class _CadastroVendasState extends State<CadastroVendas> {
                             setState(() {
                               produto.idPronto = suggestion.id;
                               produto.nomeProd = suggestion['referencia'];
+                              produto.precoVenda = double.tryParse(
+                                  suggestion['precoVenda']
+                                      .replaceAll('.', '')
+                                      .replaceAll(',', '.'));
                               produto.controller.text =
                                   suggestion['referencia'];
                             });
@@ -230,7 +246,7 @@ class _CadastroVendasState extends State<CadastroVendas> {
                         SizedBox(height: 10),
                         TextFormField(
                           decoration: InputDecoration(
-                            label: Text('Quantidade'),
+                            labelText: 'Quantidade',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -240,9 +256,18 @@ class _CadastroVendasState extends State<CadastroVendas> {
                             FilteringTextInputFormatter.digitsOnly
                           ],
                           onChanged: (value) {
-                            produto.qtd = value;
+                            setState(() {
+                              produto.qtd = value;
+                            });
                           },
                         ),
+                        SizedBox(height: 16.0),
+                        if (produto.precoVenda != null && produto.qtd != null && produto.qtd!.isNotEmpty)
+                          Text(
+                            'Total: R\$${(produto.precoVenda! * int.parse(produto.qtd!)).toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 18, color: Colors.black),
+                          ),
+                        
                         SizedBox(height: 16.0),
                       ],
                     ),
