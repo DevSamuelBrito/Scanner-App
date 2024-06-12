@@ -138,7 +138,7 @@ class _HomePage extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 40),
             Container(
               child: Center(
                 child: FractionallySizedBox(
