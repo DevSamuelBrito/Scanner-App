@@ -17,7 +17,10 @@ import 'dart:math';
 
 //Comentário
 class CadastrarProdutosPage extends StatefulWidget {
-  CadastrarProdutosPage({Key? key});
+  final String codigoBarras;
+
+  CadastrarProdutosPage({Key? key, required this.codigoBarras})
+      : super(key: key);
 
   @override
   _CadastrarProdutosPageState createState() => _CadastrarProdutosPageState();
@@ -43,15 +46,17 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
     }
   }
 
-  Future<void> _uploadImageToFirebase(String imagePath) async {
+  Future<String> _uploadImageToFirebase(String imagePath) async {
     final storage = FirebaseStorage.instance;
     File file = File(imagePath);
     try {
       String imageName = "images/img-${DateTime.now().toString()}.png";
       await storage.ref(imageName).putFile(file);
-      String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
+      String imageUrl = await storage.ref(imageName).getDownloadURL();
+      return imageUrl;
     } catch (e) {
       print('Erro ao fazer upload da imagem: $e');
+      return '';
     }
   }
 
@@ -66,8 +71,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
       MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
   final txtReferencia = TextEditingController();
 
-  void _Cadastrar(BuildContext context) {
-    //Lista para armazenar os nomes dos campos não preenchidos
+  void _Cadastrar(BuildContext context) async {
     List<String> camposNaoPreenchidos = [];
 
     //Verifica se o campo de descrição está vazio
@@ -122,8 +126,8 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
       return; //Sai do método caso haja campos não preenchidos
     }
 
-    if (camposNaoPreenchidos.isEmpty) {
-      // Gere um productId único utilizando a função v4 do uuid
+    if (imageFile != null) {
+      String imageUrl = await _uploadImageToFirebase(imageFile!.path);
       String productId = uuid.v4();
       FirebaseFirestore.instance.collection('Produtos').add(
         {
@@ -132,6 +136,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
           'referencia': txtReferencia.text,
           'codigoBarras': randomNumbers,
           'produtoId': productId,
+          'imageUrl': imageUrl,
         },
       ).then((DocumentReference docRef) {
         print('ID do produto cadastrado: $productId');
@@ -161,7 +166,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.download,
+                      PhosphorIcons.download(),
                     ),
                   ),
                 ),
@@ -179,7 +184,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.camera,
+                      PhosphorIcons.camera(),
                       color: Colors.grey[500],
                     ),
                   ),
@@ -198,7 +203,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.trash,
+                      PhosphorIcons.trash(),
                       color: Colors.grey[500],
                     ),
                   ),
@@ -255,7 +260,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
                             child: IconButton(
                               onPressed: _ShowOpcoesBottomSheet,
                               icon: Icon(
-                                PhosphorIcons.pencilSimple,
+                                PhosphorIcons.pencilSimple(),
                               ),
                             ),
                           ),

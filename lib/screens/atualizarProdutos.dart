@@ -16,48 +16,46 @@ import 'package:uuid/uuid.dart';
 
 // Update page
 class UpdateProdutosPage extends StatefulWidget {
-  final String docId;
-  UpdateProdutosPage({required this.docId});
+  final String document;
+  UpdateProdutosPage({required this.document});
 
   @override
   State<UpdateProdutosPage> createState() => _UpdateProdutosPageState();
 }
 
 class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
+  late TextEditingController txtDescricao;
+  late MoneyMaskedTextController txtPrecoVenda;
+  late TextEditingController txtReferencia;
+  late ImagePicker imagePicker;
+  late String newImageUrl;
+  File? imageFile;
+  Uuid uuid = Uuid();
+
   @override
   void initState() {
     super.initState();
+    txtDescricao = TextEditingController();
+    txtPrecoVenda =
+        MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
+    txtReferencia = TextEditingController();
+    imagePicker = ImagePicker();
+    // newImageUrl = widget.document['imageUrl'];
     load();
   }
 
   load() async {
     var doc = await FirebaseFirestore.instance
         .collection('Produtos')
-        .doc(widget.docId)
+        .doc(widget.document)
         .get();
     txtDescricao.text = doc.data()!['descriçao'];
     txtPrecoVenda.text = doc.data()!['precoVenda'];
     txtReferencia.text = doc.data()!['referenica'];
+    newImageUrl = doc.data()!['imageUrl'];
   }
 
-  final txtDescricao = TextEditingController();
-  final txtPrecoVenda =
-      MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
-  final txtReferencia = TextEditingController();
-  final imagePicker = ImagePicker();
-  File? imageFile;
-  String randomNumbers = '';
-  // Instancie um objeto Uuid
-  Uuid uuid = Uuid();
-
-  void _generatedRandomNumber() {
-    setState(() {
-      randomNumbers = List.generate(12, (index) => Random().nextInt(10)).join();
-    });
-  }
-
-  void _UpdateProdutos(BuildContext context) {
-    //Lista para armazenar os nomes dos campos não preenchidos
+  void _UpdateProdutos(BuildContext context) async {
     List<String> camposNaoPreenchidos = [];
 
     //Verifica se o campo de descrição está vazio
@@ -73,11 +71,6 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
     //Verifica se o campo de Refêrencia está vazio
     if (txtReferencia.text.isEmpty) {
       camposNaoPreenchidos.add("Referência");
-    }
-
-    //Verifica se o código de barras está vazio
-    if (randomNumbers.isEmpty) {
-      camposNaoPreenchidos.add("Código de Barras");
     }
 
     //Verifica se a imagem está vazia
@@ -112,57 +105,66 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
       return; //Sai do método caso haja campos não preenchidos
     }
 
-    if (camposNaoPreenchidos.isEmpty) {
-      // Gere um productId único utilizando a função v4 do uuid
+    if (imageFile != null) {
+      String ImageUrl = await _uploadImageToFirebase(imageFile!.path);
       String productId = uuid.v4();
       FirebaseFirestore.instance.collection('Produtos').add(
         {
           'descricao': txtDescricao.text,
           'precoVenda': txtPrecoVenda.text,
           'referencia': txtReferencia.text,
-          'codigoBarras': randomNumbers,
           'produtoId': productId,
+          'imageUrl': newImageUrl,
         },
-      ).then((DocumentReference docRef) {
-        print('ID do produto cadastrado: $productId');
-        // Upload da imagem para o Firebase
-        // _uploadImageToFirebase(imageFile!.path);
-
-        // Você pode realizar outras operações com o ID do documento aqui, se necessário
-      }).catchError((error) {
-        // Trate erros, se houver algum
-        print('Erro ao cadastrar o produto: $error');
-      });
+      );
       Navigator.pop(context);
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Text("Erro ao cadastrar produto"),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('ok'),
+                )
+              ],
+            );
+          });
     }
   }
 
   FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseStorage _storage = FirebaseStorage.instance;
 
-  // _pick(ImageSource source) async {
-  //   final PickedFile = await imagePicker.pickImage(source: source);
+  _pick(ImageSource source) async {
+    final PickedFile = await imagePicker.pickImage(source: source);
 
-  //   if (PickedFile != null) {
-  //     setState(
-  //       () {
-  //         imageFile = File(PickedFile.path);
-  //       },
-  //     );
-  //     _uploadImageToFirebase(PickedFile.path);
-  //   }
-  // }
+    if (PickedFile != null) {
+      setState(() {
+        imageFile = File(PickedFile.path);
+      });
+      _uploadImageToFirebase(PickedFile.path);
+    }
+  }
 
-  // Future<void> _uploadImageToFirebase(String imagePath) async {
-  //   final storage = FirebaseStorage.instance;
-  //   try {
-  //     String imageName = DateTime.now().millisecondsSinceEpoch.toString();
-  //     await storage.ref('images/$imageName').putString(imagePath);
-  //     String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
-  //   } catch (e) {
-  //     print('Erro ao fazer upload da imagem: $e');
-  //   }
-  // }
+  Future<String> _uploadImageToFirebase(String imagePath) async {
+    final storage = FirebaseStorage.instance;
+    File file = File(imagePath);
+    try {
+      String imageName = "images/img-${DateTime.now().toString()}.png";
+      await storage.ref(imageName).putFile(file);
+      String imageUrl = await storage.ref(imageName).getDownloadURL();
+      setState(() {
+        newImageUrl = imageUrl;
+      });
+      return imageUrl;
+    } catch (e) {
+      print('Erro ao fazer upload da imagem: $e');
+      return '';
+    }
+  }
 
   void _ShowOpcoesBottomSheet() {
     showModalBottomSheet(
@@ -178,7 +180,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.download,
+                      PhosphorIcons.download(),
                     ),
                   ),
                 ),
@@ -196,7 +198,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.camera,
+                      PhosphorIcons.camera(),
                       color: Colors.grey[500],
                     ),
                   ),
@@ -215,7 +217,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                   backgroundColor: Colors.grey[200],
                   child: Center(
                     child: Icon(
-                      PhosphorIcons.trash,
+                      PhosphorIcons.trash(),
                       color: Colors.grey[500],
                     ),
                   ),
@@ -259,9 +261,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                           child: CircleAvatar(
                             radius: 65,
                             backgroundColor: Colors.grey[300],
-                            backgroundImage: imageFile != null
-                                ? FileImage(imageFile!)
-                                : null,
+                            backgroundImage: NetworkImage(newImageUrl),
                           ),
                         ),
                         Positioned(
@@ -272,7 +272,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                             child: IconButton(
                               onPressed: _ShowOpcoesBottomSheet,
                               icon: Icon(
-                                PhosphorIcons.pencilSimple,
+                                PhosphorIcons.pencilSimple(),
                               ),
                             ),
                           ),
