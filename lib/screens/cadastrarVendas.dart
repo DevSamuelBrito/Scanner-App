@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scanner_app/styles/styles.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter/services.dart';
 
 class Product {
   String? idPronto;
@@ -31,8 +32,6 @@ class _CadastroVendasState extends State<CadastroVendas> {
   @override
   void initState() {
     super.initState();
-    // Aqui você pode carregar as informações do produto correspondente ao código de barras
-    // Exemplo de como você pode carregar informações do Firestore:
     loadProductDetails(widget.scannedBarcode);
   }
 
@@ -44,12 +43,11 @@ class _CadastroVendasState extends State<CadastroVendas> {
           .get();
 
       if (productSnapshot.exists) {
-        // Preencha as informações do produto nos campos de produtos
         setState(() {
           produtos.add(Product(
             idPronto: productSnapshot['produtoId'],
             nomeProd: productSnapshot['referencia'],
-            qtd: '1', // Pode definir uma quantidade padrão aqui, por exemplo
+            qtd: '1',
           ));
         });
       }
@@ -237,6 +235,10 @@ class _CadastroVendasState extends State<CadastroVendas> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           onChanged: (value) {
                             produto.qtd = value;
                           },
