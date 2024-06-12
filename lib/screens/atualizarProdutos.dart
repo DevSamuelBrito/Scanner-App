@@ -1,3 +1,4 @@
+// ignore_for_file: prefer_const_constructors
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -11,14 +12,12 @@ import 'package:barcode_widget/barcode_widget.dart';
 import 'dart:io';
 import 'package:extended_masked_text/extended_masked_text.dart';
 import 'dart:math';
-import 'package:http/http.dart' as http;
-import 'package:scanner_app/styles/styles.dart';
 import 'package:uuid/uuid.dart';
 
 // Update page
 class UpdateProdutosPage extends StatefulWidget {
-  final DocumentSnapshot document;
-  UpdateProdutosPage(this.document);
+  final String document;
+  UpdateProdutosPage({required this.document});
 
   @override
   State<UpdateProdutosPage> createState() => _UpdateProdutosPageState();
@@ -29,6 +28,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
   late MoneyMaskedTextController txtPrecoVenda;
   late TextEditingController txtReferencia;
   late ImagePicker imagePicker;
+  late String newImageUrl;
   File? imageFile;
   Uuid uuid = Uuid();
 
@@ -40,71 +40,51 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
         MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
     txtReferencia = TextEditingController();
     imagePicker = ImagePicker();
+    // newImageUrl = widget.document['imageUrl'];
     load();
   }
 
   load() async {
     var doc = await FirebaseFirestore.instance
         .collection('Produtos')
-        .doc(widget.document.id)
+        .doc(widget.document)
         .get();
-
-    if (doc.exists) {
-      var data = doc.data();
-      if (data != null) {
-        txtDescricao.text = data['descricao'] ?? '';
-        txtPrecoVenda.text = data['precoVenda'] ?? '';
-        txtReferencia.text = data['referencia'] ?? '';
-
-        String? imageUrl = data['imageUrl'];
-
-        if (imageUrl != null && imageUrl.isNotEmpty) {
-          try {
-            final http.Response response = await http.get(Uri.parse(imageUrl));
-            final List<int> imageData = response.bodyBytes;
-            setState(() {
-              imageFile = File.fromRawPath(Uint8List.fromList(imageData));
-            });
-          } catch (e) {
-            print('Erro ao carregar a imagem: $e');
-            // Lidar com o erro, por exemplo, exibir uma imagem padrão
-            setState(() {
-              imageFile = null; // Pode definir uma imagem padrão aqui
-            });
-          }
-        } else {
-          // Se não houver URL de imagem válido, definir uma imagem padrão
-          setState(() {
-            imageFile = null; // Defina uma imagem padrão aqui
-          });
-        }
-      }
-    }
+    txtDescricao.text = doc.data()!['descriçao'];
+    txtPrecoVenda.text = doc.data()!['precoVenda'];
+    txtReferencia.text = doc.data()!['referenica'];
+    newImageUrl = doc.data()!['imageUrl'];
   }
 
-  void _UpdateProdutos(BuildContext context) {
+  void _UpdateProdutos(BuildContext context) async {
     List<String> camposNaoPreenchidos = [];
 
+    //Verifica se o campo de descrição está vazio
     if (txtDescricao.text.isEmpty) {
       camposNaoPreenchidos.add("Descrição");
     }
 
+    //Verifica se o campo de preço de venda está vazio
     if (txtPrecoVenda.text.isEmpty) {
       camposNaoPreenchidos.add("Preço de venda");
     }
 
+    //Verifica se o campo de Refêrencia está vazio
     if (txtReferencia.text.isEmpty) {
       camposNaoPreenchidos.add("Referência");
     }
 
+    //Verifica se a imagem está vazia
     if (imageFile == null) {
       camposNaoPreenchidos.add("Imagem");
     }
 
+    //Se houver campos não preenchidos, mostra o dialogo de alerta
     if (camposNaoPreenchidos.isNotEmpty) {
+      //Monsta a mensagem de alerta com os nomes dos campos não preenchidos
       String mensagem = "Os seguintes campos não foram preenchidos:\n";
       mensagem += camposNaoPreenchidos.join(",\n");
 
+      //Mostra o Dialogo de alerta
       showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -122,52 +102,67 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
           );
         },
       );
-      return;
+      return; //Sai do método caso haja campos não preenchidos
     }
 
-    if (camposNaoPreenchidos.isEmpty) {
+    if (imageFile != null) {
+      String ImageUrl = await _uploadImageToFirebase(imageFile!.path);
       String productId = uuid.v4();
-      FirebaseFirestore.instance
-          .collection('Produtos')
-          .doc(widget.document.id)
-          .update(
+      FirebaseFirestore.instance.collection('Produtos').add(
         {
           'descricao': txtDescricao.text,
           'precoVenda': txtPrecoVenda.text,
           'referencia': txtReferencia.text,
           'produtoId': productId,
+          'imageUrl': newImageUrl,
         },
-      )..catchError((error) {
-          print('Erro ao atualizar o produto: $error');
-        });
+      );
       Navigator.pop(context);
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              content: Text("Erro ao cadastrar produto"),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: Text('ok'),
+                )
+              ],
+            );
+          });
     }
   }
 
+  FirebaseFirestore _firestore = FirebaseFirestore.instance;
   FirebaseStorage _storage = FirebaseStorage.instance;
 
   _pick(ImageSource source) async {
-    final XFile? xFile = await imagePicker.pickImage(source: source);
+    final PickedFile = await imagePicker.pickImage(source: source);
 
-    if (xFile != null) {
-      final pickedFile = PickedFile(xFile.path);
-
+    if (PickedFile != null) {
       setState(() {
-        imageFile = File(pickedFile.path);
+        imageFile = File(PickedFile.path);
       });
-      _uploadImageToFirebase(pickedFile.path);
+      _uploadImageToFirebase(PickedFile.path);
     }
   }
 
-  Future<void> _uploadImageToFirebase(String imagePath) async {
+  Future<String> _uploadImageToFirebase(String imagePath) async {
     final storage = FirebaseStorage.instance;
     File file = File(imagePath);
     try {
       String imageName = "images/img-${DateTime.now().toString()}.png";
       await storage.ref(imageName).putFile(file);
-      String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
+      String imageUrl = await storage.ref(imageName).getDownloadURL();
+      setState(() {
+        newImageUrl = imageUrl;
+      });
+      return imageUrl;
     } catch (e) {
       print('Erro ao fazer upload da imagem: $e');
+      return '';
     }
   }
 
@@ -191,10 +186,11 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Galeria',
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _pick(ImageSource.gallery);
+                  // _pick(ImageSource.gallery);
                 },
               ),
               ListTile(
@@ -209,10 +205,11 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Câmera',
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
-                  _pick(ImageSource.camera);
+                  // _pick(ImageSource.camera);
                 },
               ),
               ListTile(
@@ -227,6 +224,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 ),
                 title: Text(
                   'Remover',
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -245,17 +243,10 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-          backgroundColor: StylesProntos.colorPadrao,
-          title: Text(
-            "Atualizar Produtos",
-            style: TextStyle(color: Colors.white),
-          ),
-          centerTitle: true),
       body: SingleChildScrollView(
         child: Center(
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 60),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 50),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -270,9 +261,7 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                           child: CircleAvatar(
                             radius: 65,
                             backgroundColor: Colors.grey[300],
-                            backgroundImage: imageFile != null
-                                ? FileImage(imageFile!)
-                                : null,
+                            backgroundImage: NetworkImage(newImageUrl),
                           ),
                         ),
                         Positioned(
@@ -298,9 +287,8 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextField(
                   controller: txtDescricao,
                   decoration: InputDecoration(
-                    label: Text("Descrição"),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(),
+                    hintText: "Descrição",
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
@@ -308,26 +296,29 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                 TextFormField(
                   controller: txtPrecoVenda,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    label: Text("Preço de Venda"),
+                    border: OutlineInputBorder(),
+                    hintText: "Preço de Venda",
                     prefixText: "R\$",
                   ),
                   keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                      RegExp(r'^\d+\.?\d{0,2}'),
+                    )
+                  ],
                 ),
                 SizedBox(height: 15),
                 TextField(
                   controller: txtReferencia,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
-                    label: Text("Referência"),
+                    border: OutlineInputBorder(),
+                    hintText: "Referência",
                   ),
                   keyboardType: TextInputType.emailAddress,
                 ),
                 SizedBox(height: 15),
                 Container(
-                  width: 150,
+                  width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
@@ -335,22 +326,22 @@ class _UpdateProdutosPageState extends State<UpdateProdutosPage> {
                     ),
                     child: Text(
                       "Atualizar",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () => _UpdateProdutos(context),
                   ),
                 ),
                 SizedBox(height: 15),
                 Container(
-                  width: 150,
+                  width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.red),
+                          MaterialStateProperty.all<Color>(Colors.blue),
                     ),
                     child: Text(
                       "Cancelar",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(color: Colors.white),
                     ),
                     onPressed: () => Navigator.of(context).pop(),
                   ),

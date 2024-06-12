@@ -19,6 +19,7 @@ class ScannerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: "Scanner App", //Titulo do App(Edge)
+      debugShowCheckedModeBanner: false,
       routes: {
         "/home": (context) => HomePage(), // rota para a tela home
         "/cadastroProdutos": (context) => CadastrarProdutosPage(

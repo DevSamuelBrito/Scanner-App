@@ -48,15 +48,17 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
     }
   }
 
-  Future<void> _uploadImageToFirebase(String imagePath) async {
+  Future<String> _uploadImageToFirebase(String imagePath) async {
     final storage = FirebaseStorage.instance;
     File file = File(imagePath);
     try {
       String imageName = "images/img-${DateTime.now().toString()}.png";
       await storage.ref(imageName).putFile(file);
-      String imageUrl = await storage.ref('images/$imageName').getDownloadURL();
+      String imageUrl = await storage.ref(imageName).getDownloadURL();
+      return imageUrl;
     } catch (e) {
       print('Erro ao fazer upload da imagem: $e');
+      return '';
     }
   }
 
@@ -71,7 +73,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
       MoneyMaskedTextController(thousandSeparator: '.', precision: 2);
   final txtReferencia = TextEditingController();
 
-  void _Cadastrar(BuildContext context) {
+  void _Cadastrar(BuildContext context) async {
     List<String> camposNaoPreenchidos = [];
 
     if (txtDescricao.text.isEmpty) {
@@ -118,7 +120,8 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
       return;
     }
 
-    if (camposNaoPreenchidos.isEmpty) {
+    if (imageFile != null) {
+      String imageUrl = await _uploadImageToFirebase(imageFile!.path);
       String productId = uuid.v4();
       FirebaseFirestore.instance.collection('Produtos').add(
         {
@@ -127,6 +130,7 @@ class _CadastrarProdutosPageState extends State<CadastrarProdutosPage> {
           'referencia': txtReferencia.text,
           'codigoBarras': randomNumbers,
           'produtoId': productId,
+          'imageUrl': imageUrl,
         },
       ).then((DocumentReference docRef) {
         print('ID do produto cadastrado: $productId');
