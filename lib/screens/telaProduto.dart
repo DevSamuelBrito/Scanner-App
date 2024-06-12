@@ -135,8 +135,9 @@ class _TelaProduto extends State<TelaProduto> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    UpdateProdutosPage(document),
+                                builder: (context) => UpdateProdutosPage(
+                                  document: '',
+                                ),
                               ),
                             );
                           },
