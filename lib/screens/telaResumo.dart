@@ -51,6 +51,7 @@ class TelaResumo extends StatelessWidget {
       final clientSnapshot = await getClientData(clientName);
       final clientData = clientSnapshot.data()!;
       final produtos = List<Map<String, dynamic>>.from(saleData['produtos']);
+      final totalVenda = saleData['totalVenda'] is num ? saleData['totalVenda'] : double.parse(saleData['totalVenda']);
 
       doc.addPage(
         pw.Page(
@@ -78,17 +79,27 @@ class TelaResumo extends StatelessWidget {
                       style: pw.TextStyle(
                           fontSize: 20, fontWeight: pw.FontWeight.bold)),
                   ...produtos.map((produto) {
+                    final precoVenda = produto['precoVenda'] is num ? produto['precoVenda'] : double.parse(produto['precoVenda']);
+                    final qtd = produto['qtd'] is num ? produto['qtd'] : double.parse(produto['qtd']);
+                    final totalProduto = precoVenda * qtd;
                     return pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text('Nome do Produto: ${produto['nomeProd']}',
                             style: pw.TextStyle(fontSize: 12)),
-                        pw.Text('Quantidade: ${produto['qtd']}',
+                        pw.Text('Quantidade: ${qtd % 1 == 0 ? qtd.toInt() : qtd}',
+                            style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Preço de Venda: R\$${precoVenda.toStringAsFixed(2)}',
+                            style: pw.TextStyle(fontSize: 12)),
+                        pw.Text('Total: R\$${totalProduto.toStringAsFixed(2)}',
                             style: pw.TextStyle(fontSize: 12)),
                         pw.SizedBox(height: 10),
                       ],
                     );
                   }).toList(),
+                  pw.SizedBox(height: 20),
+                  pw.Text('Total da Venda: R\$${totalVenda.toStringAsFixed(2)}',
+                      style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
                 ],
               ),
             );
@@ -130,6 +141,7 @@ class TelaResumo extends StatelessWidget {
           }
 
           List<dynamic> produtos = data['produtos'];
+          double totalVenda = data['totalVenda'] is num ? data['totalVenda'] : double.parse(data['totalVenda']);
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
@@ -162,6 +174,9 @@ class TelaResumo extends StatelessWidget {
                         SizedBox(height: 10),
                         ...produtos.map(
                           (produto) {
+                            final precoVenda = produto['precoVenda'] is num ? produto['precoVenda'] : double.parse(produto['precoVenda']);
+                            final qtd = produto['qtd'] is num ? produto['qtd'] : double.parse(produto['qtd']);
+                            final totalProduto = precoVenda * qtd;
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 4.0),
                               child: Column(
@@ -171,13 +186,23 @@ class TelaResumo extends StatelessWidget {
                                     'Nome do Produto: ${produto['nomeProd']}',
                                     style: TextStyle(fontSize: 16),
                                   ),
-                                  Text('Quantidade: ${produto['qtd']}',
+                                  Text('Quantidade: ${qtd % 1 == 0 ? qtd.toInt() : qtd}',
+                                      style: TextStyle(fontSize: 16)),
+                                  Text('Preço de Venda: R\$${precoVenda.toStringAsFixed(2)}',
+                                      style: TextStyle(fontSize: 16)),
+                                  Text('Total: R\$${totalProduto.toStringAsFixed(2)}',
                                       style: TextStyle(fontSize: 16)),
                                   Divider(),
                                 ],
                               ),
                             );
                           },
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          'Total da Venda: R\$${totalVenda.toStringAsFixed(2)}',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),

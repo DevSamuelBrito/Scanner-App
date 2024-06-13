@@ -54,6 +54,8 @@ class SelecaoVendasScreen extends StatelessWidget {
                     children: [
                       SizedBox(height: 4),
                       Text('Data: ${data['Data'] ?? ''}'),
+                      Text(
+                          'Total: R\$${data['totalVenda']?.toStringAsFixed(2) ?? '0.00'}'),
                     ],
                   ),
                   trailing: Row(
