@@ -47,17 +47,7 @@ class _HomePage extends State<HomePage> {
         barcode = scannedBarcode;
       });
       if (exists) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Código de barras encontrado no banco de dados!'),
-          backgroundColor: Colors.green,
-        ));
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                CadastroVendas(scannedBarcode: scannedBarcode),
-          ),
-        );
+        showConfirmationDialog(context, scannedBarcode);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Código de barras não encontrado no banco de dados.'),
@@ -73,6 +63,45 @@ class _HomePage extends State<HomePage> {
         );
       }
     }
+  }
+
+  Future<void> showConfirmationDialog(BuildContext context, String scannedBarcode) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Código de Barras Encontrado'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Deseja ir para a tela de vendas?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Não'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o pop-up
+              },
+            ),
+            TextButton(
+              child: Text('Sim'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fecha o pop-up
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CadastroVendas(scannedBarcode: scannedBarcode),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   double getResponsiveIconSize(BuildContext context) {
