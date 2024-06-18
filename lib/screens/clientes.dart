@@ -19,11 +19,13 @@ class clientes extends StatelessWidget {
         ),
         centerTitle: true, // Centraliza o título
       ),
+
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () => Navigator.pushNamed(context, "/cadastroClientes"),
         backgroundColor: StylesProntos.colorPadrao,
       ),
+      
       body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
         stream: firestore.collection('Clientes').snapshots(),
         builder: (context,
