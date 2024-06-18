@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter/services.dart';
+import 'package:scanner_app/styles/styles.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class Product {
   String? idPronto;
   String? nomeProd;
   String? qtd;
+  double? precoVenda;
+  TextEditingController controller;
 
-  Product({this.idPronto, this.nomeProd, this.qtd});
+  Product({this.idPronto, this.nomeProd, this.qtd, this.precoVenda})
+      : controller = TextEditingController(text: nomeProd ?? '');
 }
 
 class CadastroVendas extends StatefulWidget {
+  final String scannedBarcode;
+
+  CadastroVendas({required this.scannedBarcode});
   @override
   _CadastroVendasState createState() => _CadastroVendasState();
 }
@@ -21,9 +31,77 @@ class _CadastroVendasState extends State<CadastroVendas> {
   String? time;
   List<Product> produtos = [];
 
+  @override
+  void initState() {
+    super.initState();
+    loadProductDetails(widget.scannedBarcode);
+  }
+
+  void loadProductDetails(String barcode) async {
+    try {
+      DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
+          .collection('Produtos')
+          .doc(barcode)
+          .get();
+
+      if (productSnapshot.exists) {
+        setState(() {
+          produtos.add(Product(
+              idPronto: productSnapshot['produtoId'],
+              nomeProd: productSnapshot['referencia'],
+              qtd: '1',
+              precoVenda: double.tryParse(productSnapshot['precoVenda']
+                  .replaceAll('.', '')
+                  .replaceAll(',', '.'))));
+        });
+      }
+    } catch (e) {
+      print('Erro ao carregar informações do produto: $e');
+    }
+  }
+
+  Future<void> _scanBarcode(int index) async {
+    try {
+      String barcode = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666', 
+        'Cancelar', 
+        true, 
+        ScanMode.BARCODE,
+      );
+
+      if (barcode != '-1') {
+        DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
+            .collection('Produtos')
+            .doc(barcode)
+            .get();
+
+        if (productSnapshot.exists) {
+          Map<String, dynamic> productData =
+              productSnapshot.data() as Map<String, dynamic>;
+          setState(() {
+            produtos[index].idPronto = barcode;
+            produtos[index].nomeProd = productData['referencia'] ?? '';
+            produtos[index].precoVenda = double.tryParse(
+              productData['precoVenda'].replaceAll('.', '').replaceAll(',', '.'),
+            );
+            produtos[index].controller.text = productData['referencia'] ?? '';
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Produto não encontrado.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Erro ao escanear o código de barras: $e');
+    }
+  }
+
   void enviarProdutosVendas(BuildContext context) {
     returnTime();
-    // Verifica se o campo do nome do cliente está vazio
     if (nomeCliente.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -34,7 +112,6 @@ class _CadastroVendasState extends State<CadastroVendas> {
       return;
     }
 
-    // Verifica se pelo menos um produto foi adicionado à lista
     if (produtos.isEmpty ||
         produtos.any((produto) =>
             produto.idPronto == null ||
@@ -49,17 +126,28 @@ class _CadastroVendasState extends State<CadastroVendas> {
       return;
     }
 
+    // Calcular o total da venda
+    double totalVenda = produtos.fold(0, (total, produto) {
+      double produtoTotal = double.parse(produto.qtd!) * produto.precoVenda!;
+      return total + produtoTotal;
+    });
+
+    // Enviar para o Firestore
     FirebaseFirestore.instance.collection('Vendas').add({
       'Data': returnTime()['data'],
-      'Time':  returnTime()['time'],
+      'Time': returnTime()['time'],
       'nomeCliente': nomeCliente.text,
       'produtos': produtos.map((produto) {
         return {
           'idProduto': produto.idPronto,
           'nomeProd': produto.nomeProd,
           'qtd': produto.qtd,
+          'precoVenda': produto.precoVenda,
+          'total': double.parse(produto.qtd!) * produto.precoVenda!,
         };
       }).toList(),
+      'totalVenda': totalVenda, // Adiciona o total da venda aqui
+      'createdAt': Timestamp.now(),
     });
 
     nomeCliente.clear();
@@ -85,84 +173,190 @@ class _CadastroVendasState extends State<CadastroVendas> {
     return {"data": formattedDate, "time": formattedTime};
   }
 
+  Future<List<DocumentSnapshot>> buscarProdutos(String query) async {
+    query = query.toLowerCase();
+    var result = await FirebaseFirestore.instance.collection('Produtos').get();
+
+    return result.docs.where((doc) {
+      var referencia = doc['referencia'].toString().toLowerCase();
+      return referencia.contains(query);
+    }).toList();
+  }
+
+  Future<List<DocumentSnapshot>> buscarClientes(String query) async {
+    query = query.toLowerCase();
+    var result = await FirebaseFirestore.instance.collection('Clientes').get();
+
+    return result.docs.where((doc) {
+      var nomeCliente = doc['name'].toString().toLowerCase();
+      return nomeCliente.contains(query);
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro Vendas"),
+        backgroundColor: StylesProntos.colorPadrao,
+        title: Text(
+          "Cadastro Vendas",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: nomeCliente,
-              decoration: InputDecoration(
-                hintText: 'Insira o nome do cliente',
-                border: OutlineInputBorder(),
+            TypeAheadFormField<DocumentSnapshot>(
+              textFieldConfiguration: TextFieldConfiguration(
+                decoration: InputDecoration(
+                  labelText: 'Insira ou selecione o nome do cliente',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                controller: nomeCliente,
+              ),
+              suggestionsCallback: (pattern) async {
+                return await buscarClientes(pattern);
+              },
+              itemBuilder: (context, suggestion) {
+                return ListTile(
+                  title: Text(suggestion['name']),
+                );
+              },
+              onSuggestionSelected: (suggestion) {
+                setState(() {
+                  nomeCliente.text = suggestion['name'];
+                });
+              },
+              noItemsFoundBuilder: (context) => Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text('Nenhum Cliente encontrado.'),
               ),
             ),
             SizedBox(height: 16.0),
             Expanded(
-              // Envolve a seção de produtos em um Expanded para ocupar todo o espaço disponível
               child: ListView(
                 children: [
                   for (var produto in produtos)
                     Column(
                       children: [
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Insira o id produto',
-                            border: OutlineInputBorder(),
-                          ),
-                          onChanged: (value) {
-                            produto.idPronto = value;
-                          },
+                        Text(
+                          'Produto ${produtos.indexOf(produto) + 1}',
+                          style: TextStyle(fontSize: 18, color: Colors.black),
+                        ),
+                        SizedBox(height: 10.0),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TypeAheadFormField<DocumentSnapshot>(
+                                textFieldConfiguration: TextFieldConfiguration(
+                                  decoration: InputDecoration(
+                                    labelText: 'Insira ou selecione a referência do produto',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  controller: produto.controller,
+                                ),
+                                suggestionsCallback: (pattern) async {
+                                  return await buscarProdutos(pattern);
+                                },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    title: Text(suggestion['referencia']),
+                                  );
+                                },
+                                onSuggestionSelected: (suggestion) {
+                                  setState(() {
+                                    produto.idPronto = suggestion.id;
+                                    produto.nomeProd = suggestion['referencia'];
+                                    produto.precoVenda = double.tryParse(
+                                        suggestion['precoVenda']
+                                            .replaceAll('.', '')
+                                            .replaceAll(',', '.'));
+                                    produto.controller.text = suggestion['referencia'];
+                                  });
+                                },
+                                noItemsFoundBuilder: (context) => Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('Nenhum produto encontrado.'),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.camera_alt),
+                              onPressed: () => _scanBarcode(produtos.indexOf(produto)),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 10),
-                        TextField(
+                        TextFormField(
                           decoration: InputDecoration(
-                            hintText: 'Insira o nome do produto',
-                            border: OutlineInputBorder(),
+                            labelText: 'Quantidade',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
                           onChanged: (value) {
-                            produto.nomeProd = value;
+                            setState(() {
+                              produto.qtd = value;
+                            });
                           },
                         ),
-                        SizedBox(height: 10),
-                        TextField(
-                          decoration: InputDecoration(
-                            hintText: 'Quantidade',
-                            border: OutlineInputBorder(),
+                        SizedBox(height: 16.0),
+                        if (produto.precoVenda != null && produto.qtd != null && produto.qtd!.isNotEmpty)
+                          Text(
+                            'Total: R\$${(produto.precoVenda! * int.parse(produto.qtd!)).toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 18, color: Colors.black),
                           ),
-                          onChanged: (value) {
-                            produto.qtd = value;
-                          },
-                        ),
                         SizedBox(height: 16.0),
                       ],
                     ),
                 ],
               ),
             ),
-            if (produtos.isNotEmpty)
-              ElevatedButton(
-                onPressed: removerUltimosProdutos,
-                child: Text('Remover Últimos 3 Produtos'),
-              ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  produtos.add(Product());
-                });
-              },
-              child: Text('Adicionar mais um Produto'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () => enviarProdutosVendas(context),
-              child: Text('Cadastrar Venda'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (produtos.isNotEmpty)
+                  TextButton(
+                    style: StylesProntos.pequenoBotaoRed(context),
+                    onPressed: removerUltimosProdutos,
+                    child: Text(
+                      '-',
+                      style: StylesProntos.textBotao(context, '20', Colors.white),
+                    ),
+                  ),
+                TextButton(
+                  style: StylesProntos.pequenoBotaoVerde(context),
+                  onPressed: () {
+                    setState(
+                      () {
+                        produtos.add(Product());
+                      },
+                    );
+                  },
+                  child: Text(
+                    '+',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  ),
+                ),
+                TextButton(
+                  style: StylesProntos.pequenoBotaoBlue(context),
+                  onPressed: () => enviarProdutosVendas(context),
+                  child: Text(
+                    '✓',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

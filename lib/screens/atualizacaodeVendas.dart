@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter/services.dart';
+import 'package:scanner_app/styles/styles.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 
 class Product {
   String? idPronto;
   String? nomeProd;
   String? qtd;
+  double? precoVenda;
+  TextEditingController controller;
 
-  Product({this.idPronto, this.nomeProd, this.qtd});
+  Product({this.idPronto, this.nomeProd, this.qtd, this.precoVenda})
+      : controller = TextEditingController(text: nomeProd ?? '');
 }
 
 class AtualizacaodeVendas extends StatefulWidget {
@@ -18,12 +26,30 @@ class AtualizacaodeVendas extends StatefulWidget {
 }
 
 class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
-  late TextEditingController? nomeCliente = TextEditingController();
-  late List<Map<String, dynamic>> produtos = [];
+  final nomeCliente = TextEditingController();
+  String? data;
+  String? time;
+  List<Product> produtos = [];
 
-  Future<void> _AtualizarProdutosVendas() async {
-    // Verifica se o campo do nome do cliente está vazio
-    if (nomeCliente?.text.isEmpty ?? true) {
+  @override
+  void initState() {
+    super.initState();
+    Map<String, dynamic> data = widget.document.data() as Map<String, dynamic>;
+    nomeCliente.text = data['nomeCliente'];
+    List<dynamic> produtosList = data['produtos'];
+    produtos = produtosList.map((produto) {
+      return Product(
+        idPronto: produto['idProduto'],
+        nomeProd: produto['nomeProd'],
+        qtd: produto['qtd'],
+        precoVenda: produto['precoVenda'],
+      );
+    }).toList();
+  }
+
+  void atualizarProdutosVendas(BuildContext context) {
+    returnTime();
+    if (nomeCliente.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Por favor, insira o nome do cliente.'),
@@ -32,13 +58,12 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
       );
       return;
     }
-    // Verifica se o campo de produtos está vazio
+
     if (produtos.isEmpty ||
-        produtos.length == 0 ||
         produtos.any((produto) =>
-            produto['idProduto'].isEmpty ||
-            produto['nomeProd'].isEmpty ||
-            produto['qtd'].isEmpty)) {
+            produto.idPronto == null ||
+            produto.nomeProd == null ||
+            produto.qtd == null)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Por favor, preencha todos os campos do produto.'),
@@ -48,40 +73,38 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
       return;
     }
 
-    try {
-      // Atualizar os dados no Firebase
-      await FirebaseFirestore.instance
-          .collection('Vendas')
-          .doc(widget.document.id)
-          .update({
-        'nomeCliente': nomeCliente?.text,
-        'produtos': produtos,
-      });
-      // Mostrar uma mensagem de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Venda atualizada com sucesso.'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (error) {
-      // Mostrar uma mensagem de erro, se houver algum problema
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Erro ao atualizar venda: $error'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-    Navigator.pushReplacementNamed(context, '/telaResumo');
-  }
+    // Calcular o total da venda
+    double totalVenda = produtos.fold(0, (total, produto) {
+      double produtoTotal = double.parse(produto.qtd!) * produto.precoVenda!;
+      return total + produtoTotal;
+    });
 
-  @override
-  void initState() {
-    super.initState();
-    Map<String, dynamic> data = widget.document.data() as Map<String, dynamic>;
-    nomeCliente = TextEditingController(text: data['nomeCliente']);
-    produtos = List<Map<String, dynamic>>.from(data['produtos']);
+    // Atualizar no Firestore
+    FirebaseFirestore.instance.collection('Vendas').doc(widget.document.id).update({
+      'Data': returnTime()['data'],
+      'Time': returnTime()['time'],
+      'nomeCliente': nomeCliente.text,
+      'produtos': produtos.map((produto) {
+        return {
+          'idProduto': produto.idPronto,
+          'nomeProd': produto.nomeProd,
+          'qtd': produto.qtd,
+          'precoVenda': produto.precoVenda,
+          'total': double.parse(produto.qtd!) * produto.precoVenda!,
+        };
+      }).toList(),
+      'totalVenda': totalVenda, // Adiciona o total da venda aqui
+      'createdAt': Timestamp.now(),
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Venda atualizada com sucesso.'),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    Navigator.pushReplacementNamed(context, '/telaResumo');
   }
 
   void removerUltimosProdutos() {
@@ -90,88 +113,240 @@ class _AtualizacaodeVendasState extends State<AtualizacaodeVendas> {
     });
   }
 
+  Map<String, dynamic> returnTime() {
+    final DateTime dateNow = DateTime.now();
+    final dateFormatter = DateFormat('yyyy-MM-dd');
+    final timeFormatter = DateFormat('HH:mm');
+    final formattedDate = dateFormatter.format(dateNow);
+    final formattedTime = timeFormatter.format(dateNow);
+    return {"data": formattedDate, "time": formattedTime};
+  }
+
+  Future<List<DocumentSnapshot>> buscarProdutos(String query) async {
+    query = query.toLowerCase();
+    var result = await FirebaseFirestore.instance.collection('Produtos').get();
+
+    return result.docs.where((doc) {
+      var referencia = doc['referencia'].toString().toLowerCase();
+      return referencia.contains(query);
+    }).toList();
+  }
+
+  Future<List<DocumentSnapshot>> buscarClientes(String query) async {
+    query = query.toLowerCase();
+    var result = await FirebaseFirestore.instance.collection('Clientes').get();
+
+    return result.docs.where((doc) {
+      var nomeCliente = doc['name'].toString().toLowerCase();
+      return nomeCliente.contains(query);
+    }).toList();
+  }
+
+  Future<void> _scanBarcode(int index) async {
+    try {
+      String barcode = await FlutterBarcodeScanner.scanBarcode(
+        '#ff6666',
+        'Cancelar',
+        true,
+        ScanMode.BARCODE,
+      );
+
+      if (barcode != '-1') {
+        DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
+            .collection('Produtos')
+            .doc(barcode)
+            .get();
+
+        if (productSnapshot.exists) {
+          Map<String, dynamic> productData =
+              productSnapshot.data() as Map<String, dynamic>;
+          setState(() {
+            produtos[index].idPronto = barcode;
+            produtos[index].nomeProd = productData['referencia'] ?? '';
+            produtos[index].precoVenda = double.tryParse(
+              productData['precoVenda'].replaceAll('.', '').replaceAll(',', '.'),
+            );
+            produtos[index].controller.text = productData['referencia'] ?? '';
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Produto não encontrado.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Erro ao escanear o código de barras: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Cadastro Vendas"),
+        backgroundColor: StylesProntos.colorPadrao,
+        title: Text(
+          "Editar Vendas",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
       ),
       body: Container(
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextField(
-              controller: nomeCliente,
-              decoration: InputDecoration(
-                hintText: nomeCliente!.text.isNotEmpty
-                    ? nomeCliente?.text
-                    : 'Nome do Cliente',
-                border: OutlineInputBorder(),
+            TypeAheadFormField<DocumentSnapshot>(
+              textFieldConfiguration: TextFieldConfiguration(
+                decoration: InputDecoration(
+                  labelText: 'Insira ou selecione o nome do cliente',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                controller: nomeCliente,
+              ),
+              suggestionsCallback: (pattern) async {
+                return await buscarClientes(pattern);
+              },
+              itemBuilder: (context, suggestion) {
+                return ListTile(
+                  title: Text(suggestion['name']),
+                );
+              },
+              onSuggestionSelected: (suggestion) {
+                setState(() {
+                  nomeCliente.text = suggestion['name'];
+                });
+              },
+              noItemsFoundBuilder: (context) => Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text('Nenhum Cliente encontrado.'),
               ),
             ),
             SizedBox(height: 16.0),
             Expanded(
-              // Envolve a seção de produtos em um Expanded para ocupar todo o espaço disponível
-              child: ListView.builder(
-                itemCount: produtos.length,
-                itemBuilder: (context, index) {
-                  Map<String, dynamic> produto = produtos[index];
-                  return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              child: ListView(
+                children: [
+                  for (var produto in produtos)
+                    Column(
                       children: [
-                        Text('ID do Produto:'),
-                        TextField(
-                          controller:
-                              TextEditingController(text: produto['idProduto']),
-                          onChanged: (value) {
-                            produtos[index]['idProduto'] = value;
-                          },
+                        Text(
+                          'Produto ${produtos.indexOf(produto) + 1}',
+                          style: TextStyle(fontSize: 18, color: Colors.black),
                         ),
                         SizedBox(height: 10.0),
-                        Text('Nome do Produto:'),
-                        TextField(
-                          controller:
-                              TextEditingController(text: produto['nomeProd']),
-                          onChanged: (value) {
-                            produtos[index]['nomeProd'] = value;
-                          },
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TypeAheadFormField<DocumentSnapshot>(
+                                textFieldConfiguration: TextFieldConfiguration(
+                                  decoration: InputDecoration(
+                                    labelText: 'Insira ou selecione a referência do produto',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  controller: produto.controller,
+                                ),
+                                suggestionsCallback: (pattern) async {
+                                  return await buscarProdutos(pattern);
+                                },
+                                itemBuilder: (context, suggestion) {
+                                  return ListTile(
+                                    title: Text(suggestion['referencia']),
+                                  );
+                                },
+                                onSuggestionSelected: (suggestion) {
+                                  setState(() {
+                                    produto.idPronto = suggestion.id;
+                                    produto.nomeProd = suggestion['referencia'];
+                                    produto.precoVenda = double.tryParse(
+                                        suggestion['precoVenda']
+                                            .replaceAll('.', '')
+                                            .replaceAll(',', '.'));
+                                    produto.controller.text = suggestion['referencia'];
+                                  });
+                                },
+                                noItemsFoundBuilder: (context) => Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('Nenhum produto encontrado.'),
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.camera_alt),
+                              onPressed: () => _scanBarcode(produtos.indexOf(produto)),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 10),
-                        Text('Quantidade:'),
-                        TextField(
-                          controller:
-                              TextEditingController(text: produto['qtd']),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Quantidade',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          keyboardType: TextInputType.number,
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          initialValue: produto.qtd,
                           onChanged: (value) {
-                            produtos[index]['qtd'] = value;
+                            setState(() {
+                              produto.qtd = value;
+                            });
                           },
                         ),
-                        SizedBox(height: 10),
-                      ]);
-                },
+                        SizedBox(height: 16.0),
+                        if (produto.precoVenda != null && produto.qtd != null && produto.qtd!.isNotEmpty)
+                          Text(
+                            'Total: R\$${(produto.precoVenda! * int.parse(produto.qtd!)).toStringAsFixed(2)}',
+                            style: TextStyle(fontSize: 18, color: Colors.black),
+                          ),
+                        SizedBox(height: 16.0),
+                      ],
+                    ),
+                ],
               ),
             ),
-            if (produtos.isNotEmpty)
-              ElevatedButton(
-                onPressed: removerUltimosProdutos,
-                child: Text('Remover Últimos 3 Produtos'),
-              ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  produtos.add({
-                    'idProduto': '',
-                    'nomeProd': '',
-                    'qtd': '',
-                  });
-                });
-              },
-              child: Text('Adicionar mais um Produto'),
-            ),
-            SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () => _AtualizarProdutosVendas(),
-              child: Text('Cadastrar Venda'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (produtos.isNotEmpty)
+                  TextButton(
+                    style: StylesProntos.pequenoBotaoRed(context),
+                    onPressed: removerUltimosProdutos,
+                    child: Text(
+                      '-',
+                      style: StylesProntos.textBotao(context, '20', Colors.white),
+                    ),
+                  ),
+                TextButton(
+                  style: StylesProntos.pequenoBotaoVerde(context),
+                  onPressed: () {
+                    setState(
+                      () {
+                        produtos.add(Product());
+                      },
+                    );
+                  },
+                  child: Text(
+                    '+',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  ),
+                ),
+                TextButton(
+                  style: StylesProntos.pequenoBotaoBlue(context),
+                  onPressed: () => atualizarProdutosVendas(context),
+                  child: Text(
+                    '✓',
+                    style: StylesProntos.textBotao(context, '20', Colors.white),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
