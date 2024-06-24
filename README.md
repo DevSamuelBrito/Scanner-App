@@ -35,3 +35,16 @@ Home Page:
 
 <img src="lib/images/readme/image-1.png" alt="clienteHome" width="210"/>
 <img src="lib/images/readme/image-2.png" alt="cadastrarClientes" width="210"/>
+<img src="lib/images/readme/image-4.png" alt="editarClientes" width="210"/>
+
+- Product screen with registration and editing: 
+
+<img src="lib/images/readme/image-3.png" alt="ProdutosHome" width="210"/>
+<img src="lib/images/readme/image-5.png" alt="cadastrarProdutos" width="210"/>
+<img src="lib/images/readme/image-6.png" alt="editarProdutos" width="210"/>
+
+- Sales screen with registration and editing: 
+
+<img src="lib/images/readme/image-7.png" alt="SalesHome" width="210"/>
+<img src="lib/images/readme/image-8.png" alt="cadastrarVendas" width="210"/>
+<img src="lib/images/readme/image-9.png" alt="editarVendas" width="210"/>
