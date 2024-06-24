@@ -1,7 +1,7 @@
-# Scanner App 
+# Scanner App v1.0
 
 
-## What is the Scanner App?
+## What is the Scanner App? 
 
 The Scanner App is an application that helps you when registering jewelry.
 With it, you insert the jewelry data into the application and it generates a code that can be
@@ -24,8 +24,13 @@ O Scanner App é um aplicativo que auxilia na hora de cadastrar joias.
 Com ele você insere os dados da joia no aplicativo e ele gera um código que pode ser
 exportados ambos quando lidos pelo próprio App.
 
-## Observações gerais
+![homepage](image.png)
 
+
+- Com o app você pode cadastrar clientes e editar os mesmos:
+![clienteHome](image-1.png)
+![cadastrarClientes](image-2.png)
+## Observações gerais
 - Este projeto é um Mobile App feito em Dart utilizando o framework Flutter.
 
 - Este é um trabalho interdisciplinar feito para a faculdade resolver um problema real que enfrentamos.
