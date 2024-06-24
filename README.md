@@ -24,7 +24,7 @@ O Scanner App é um aplicativo que auxilia na hora de cadastrar joias.
 Com ele você insere os dados da joia no aplicativo e ele gera um código que pode ser
 exportados ambos quando lidos pelo próprio App.
 
-![homepage](image.png)
+<img src="lib/images/readme/image.png alt="homepage" width="300"/>
 
 
 - Com o app você pode cadastrar clientes e editar os mesmos:
